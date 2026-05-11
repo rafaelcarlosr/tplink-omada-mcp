@@ -3,6 +3,7 @@ import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type { ToolCategory, ToolPermission } from '../config.js';
 import type { OmadaClient } from '../omadaClient/index.js';
 import { logger } from '../utils/logger.js';
+import { registerBatchDeleteOsgCustomAclsTool } from './batchDeleteOsgCustomAcls.js';
 import { registerCreateGroupProfileTool } from './createGroupProfile.js';
 import { registerDeleteAclTool } from './deleteAcl.js';
 import { registerDeleteDhcpReservationTool } from './deleteDhcpReservation.js';
@@ -591,6 +592,7 @@ const TOOL_REGISTRY: ToolEntry[] = [
     { fn: registerModifyOsgAclTool, category: 'firewall-acl', permission: 'write' },
     { fn: registerModifyEapAclTool, category: 'firewall-acl', permission: 'write' },
     { fn: registerModifyOswAclTool, category: 'firewall-acl', permission: 'write' },
+    { fn: registerBatchDeleteOsgCustomAclsTool, category: 'firewall-acl', permission: 'write' },
 
     // --- Firewall traffic ---
     { fn: registerGetUrlFilterGeneralTool, category: 'firewall-traffic', permission: 'read' },

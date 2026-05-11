@@ -329,6 +329,22 @@ export class NetworkOperations {
     }
 
     /**
+     * Batch delete gateway (OSG) custom ACL rules.
+     * OperationId: batchDeleteOsgCustomAcls
+     *
+     * @param body - Selection body conforming to batchIds schema. Properties:
+     *   - selectType: 'all' (process every entry) | 'include' (process only listed ids) | 'exclude' (process every entry except listed ids).
+     *   - ids: array of rule IDs. Required when selectType=include/exclude; ignored when selectType=all.
+     *   - searchKey: optional fuzzy filter applied before selection.
+     */
+    public async batchDeleteOsgCustomAcls(body: unknown, siteId?: string, customHeaders?: CustomHeaders): Promise<unknown> {
+        const resolvedSiteId = this.site.resolveSiteId(siteId);
+        const path = this.buildPath(`/sites/${encodeURIComponent(resolvedSiteId)}/acls/gateway-acls/batch-delete`);
+        const response = await this.request.post<OmadaApiResponse<unknown>>(path, body, customHeaders);
+        return this.request.ensureSuccess(response);
+    }
+
+    /**
      * List static routing rules.
      * OperationId: getStaticRoutingList
      */

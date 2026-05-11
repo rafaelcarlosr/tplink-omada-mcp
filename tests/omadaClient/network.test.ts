@@ -714,6 +714,49 @@ describe('NetworkOperations', () => {
         });
     });
 
+    describe('batchDeleteOsgCustomAcls', () => {
+        it('should POST to the gateway-acls/batch-delete path with the body', async () => {
+            const body = { selectType: 'include', ids: ['acl-1', 'acl-2'] };
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: {} };
+            vi.mocked(mockRequest.post).mockResolvedValue(mockResponse);
+
+            const result = await networkOps.batchDeleteOsgCustomAcls(body, 'site-123');
+
+            expect(mockSite.resolveSiteId).toHaveBeenCalledWith('site-123');
+            expect(mockRequest.post).toHaveBeenCalledWith('/openapi/v1/test-omadac/sites/site-123/acls/gateway-acls/batch-delete', body, undefined);
+            expect(result).toEqual({});
+        });
+
+        it('should pass custom headers', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: {} };
+            vi.mocked(mockRequest.post).mockResolvedValue(mockResponse);
+            const headers = { 'X-Custom': 'v' };
+            await networkOps.batchDeleteOsgCustomAcls({ selectType: 'all' }, 'site-123', headers);
+            expect(mockRequest.post).toHaveBeenCalledWith(expect.any(String), { selectType: 'all' }, headers);
+        });
+
+        it('should use default site if siteId not provided', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: {} };
+            vi.mocked(mockRequest.post).mockResolvedValue(mockResponse);
+
+            await networkOps.batchDeleteOsgCustomAcls({ selectType: 'all' });
+
+            expect(mockSite.resolveSiteId).toHaveBeenCalledWith(undefined);
+            expect(mockRequest.post).toHaveBeenCalledWith(
+                '/openapi/v1/test-omadac/sites/default-site/acls/gateway-acls/batch-delete',
+                { selectType: 'all' },
+                undefined
+            );
+        });
+
+        it('should propagate API errors via ensureSuccess', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: -1001, msg: 'Invalid request parameters.', result: null };
+            vi.mocked(mockRequest.post).mockResolvedValue(mockResponse);
+
+            await expect(networkOps.batchDeleteOsgCustomAcls({ selectType: 'all' }, 'site-123')).rejects.toThrow('Invalid request parameters.');
+        });
+    });
+
     describe('listStaticRoutes', () => {
         it('should list static routing rules', async () => {
             const mockData = [{ id: 'route-1', destination: '10.0.0.0/24' }];

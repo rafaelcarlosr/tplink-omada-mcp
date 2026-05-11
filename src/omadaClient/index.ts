@@ -780,6 +780,10 @@ export class OmadaClient {
         return await this.networkOps.modifyOswAcl(aclId, body, siteId, customHeaders);
     }
 
+    public async batchDeleteOsgCustomAcls(body: unknown, siteId?: string, customHeaders?: CustomHeaders): Promise<unknown> {
+        return await this.networkOps.batchDeleteOsgCustomAcls(body, siteId, customHeaders);
+    }
+
     public async listStaticRoutes(siteId?: string, customHeaders?: CustomHeaders): Promise<unknown[]> {
         return await this.networkOps.listStaticRoutes(siteId, customHeaders);
     }
