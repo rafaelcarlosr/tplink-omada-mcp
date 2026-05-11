@@ -333,6 +333,7 @@ import { registerListUpgradeFirmwaresTool } from './listUpgradeFirmwares.js';
 import { registerListUpgradeOverviewFirmwaresTool } from './listUpgradeOverviewFirmwares.js';
 import { registerListWireguardTool } from './listWireguard.js';
 import { registerListWireguardPeersTool } from './listWireguardPeers.js';
+import { registerModifyOsgAclTool } from './modifyOsgAcl.js';
 import { registerSearchDevicesTool } from './searchDevices.js';
 import { registerSetClientRateLimitTool } from './setClientRateLimit.js';
 import { registerSetClientRateLimitProfileTool } from './setClientRateLimitProfile.js';
@@ -585,6 +586,7 @@ const TOOL_REGISTRY: ToolEntry[] = [
     { fn: registerGetRadiusProxyConfigTool, category: 'firewall-acl', permission: 'read' },
     { fn: registerGetApplicationAclTool, category: 'firewall-acl', permission: 'read' },
     { fn: registerDeleteAclTool, category: 'firewall-acl', permission: 'write' },
+    { fn: registerModifyOsgAclTool, category: 'firewall-acl', permission: 'write' },
 
     // --- Firewall traffic ---
     { fn: registerGetUrlFilterGeneralTool, category: 'firewall-traffic', permission: 'read' },

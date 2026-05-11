@@ -282,6 +282,22 @@ export class NetworkOperations {
     }
 
     /**
+     * Modify a gateway (OSG) ACL rule.
+     * OperationId: modifyOsgAcl
+     *
+     * @param aclId - ACL rule ID (returned by listOsgAcls).
+     * @param body - Updated rule body conforming to GatewayACLConfig. Required:
+     *   description, destinationType, direction, policy, protocols, sourceIds,
+     *   sourceType, stateMode, status, syslog.
+     */
+    public async modifyOsgAcl(aclId: string, body: unknown, siteId?: string, customHeaders?: CustomHeaders): Promise<unknown> {
+        const resolvedSiteId = this.site.resolveSiteId(siteId);
+        const path = this.buildPath(`/sites/${encodeURIComponent(resolvedSiteId)}/acls/osg-acls/${encodeURIComponent(aclId)}`);
+        const response = await this.request.put<OmadaApiResponse<unknown>>(path, body, customHeaders);
+        return this.request.ensureSuccess(response);
+    }
+
+    /**
      * List static routing rules.
      * OperationId: getStaticRoutingList
      */

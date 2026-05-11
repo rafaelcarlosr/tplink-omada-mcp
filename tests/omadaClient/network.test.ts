@@ -528,6 +528,69 @@ describe('NetworkOperations', () => {
         });
     });
 
+    describe('modifyOsgAcl', () => {
+        const sampleBody = {
+            description: 'Block IoT to LAN',
+            status: true,
+            policy: 0,
+            protocols: [6, 17],
+            sourceType: 0,
+            sourceIds: ['net-iot'],
+            destinationType: 0,
+            destinationIds: ['net-lan'],
+            direction: { lanToLan: true },
+            stateMode: 0,
+            syslog: false,
+        };
+
+        it('should PUT to the osg-acls path with the rule body', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: { id: 'osg-acl-1' } };
+            vi.mocked(mockRequest.put).mockResolvedValue(mockResponse);
+
+            const result = await networkOps.modifyOsgAcl('osg-acl-1', sampleBody, 'site-123');
+
+            expect(mockSite.resolveSiteId).toHaveBeenCalledWith('site-123');
+            expect(mockRequest.put).toHaveBeenCalledWith('/openapi/v1/test-omadac/sites/site-123/acls/osg-acls/osg-acl-1', sampleBody, undefined);
+            expect(result).toEqual({ id: 'osg-acl-1' });
+        });
+
+        it('should pass custom headers', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: {} };
+            vi.mocked(mockRequest.put).mockResolvedValue(mockResponse);
+            const headers = { 'X-Custom': 'v' };
+            await networkOps.modifyOsgAcl('osg-acl-1', sampleBody, 'site-123', headers);
+            expect(mockRequest.put).toHaveBeenCalledWith(expect.any(String), sampleBody, headers);
+        });
+
+        it('should use default site if siteId not provided', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: {} };
+            vi.mocked(mockRequest.put).mockResolvedValue(mockResponse);
+
+            await networkOps.modifyOsgAcl('osg-acl-1', sampleBody);
+
+            expect(mockSite.resolveSiteId).toHaveBeenCalledWith(undefined);
+            expect(mockRequest.put).toHaveBeenCalledWith('/openapi/v1/test-omadac/sites/default-site/acls/osg-acls/osg-acl-1', sampleBody, undefined);
+        });
+
+        it('should URL-encode special chars in aclId path segment', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: {} };
+            vi.mocked(mockRequest.put).mockResolvedValue(mockResponse);
+            await networkOps.modifyOsgAcl('acl/with spaces&!', sampleBody, 'site-123');
+            expect(mockRequest.put).toHaveBeenCalledWith(
+                '/openapi/v1/test-omadac/sites/site-123/acls/osg-acls/acl%2Fwith%20spaces%26!',
+                sampleBody,
+                undefined
+            );
+        });
+
+        it('should propagate API errors via ensureSuccess', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: -1001, msg: 'Invalid request parameters.', result: null };
+            vi.mocked(mockRequest.put).mockResolvedValue(mockResponse);
+
+            await expect(networkOps.modifyOsgAcl('osg-acl-1', sampleBody, 'site-123')).rejects.toThrow('Invalid request parameters.');
+        });
+    });
+
     describe('listStaticRoutes', () => {
         it('should list static routing rules', async () => {
             const mockData = [{ id: 'route-1', destination: '10.0.0.0/24' }];
