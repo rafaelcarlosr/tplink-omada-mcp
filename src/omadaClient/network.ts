@@ -284,6 +284,61 @@ export class NetworkOperations {
     }
 
     /**
+     * Create a new group profile (IP, IP-Port, MAC, IPv6, IPv6-Port, Country, or Domain group).
+     * OperationId: createGroupProfile
+     *
+     * @param groupData - Group profile body conforming to CreateGroupOpenApiVO. Required fields:
+     *   - name: 1-64 chars, no leading/trailing spaces
+     *   - type: 0=IP, 1=IP-Port, 2=MAC, 3=IPv6, 4=IPv6-Port, 5=Country, 7=Domain
+     *   Conditional fields (per type): ipList, ipv6List, macAddressList, countryList, domainNamePort, portType, portList, portMaskList, description
+     */
+    public async createGroupProfile(groupData: unknown, siteId?: string, customHeaders?: CustomHeaders): Promise<unknown> {
+        const resolvedSiteId = this.site.resolveSiteId(siteId);
+        const path = this.buildPath(`/sites/${encodeURIComponent(resolvedSiteId)}/profiles/groups`);
+        const response = await this.request.post<OmadaApiResponse<unknown>>(path, groupData, customHeaders);
+        return this.request.ensureSuccess(response);
+    }
+
+    /**
+     * Modify an existing group profile by type and ID.
+     * OperationId: modifyGroupProfile
+     *
+     * @param groupType - Group type ('0'..'7' as string). See createGroupProfile for type enum.
+     * @param groupId - Group profile ID returned from list/create operations.
+     * @param groupData - Updated group profile body conforming to CreateGroupOpenApiVO.
+     */
+    public async updateGroupProfile(
+        groupType: string,
+        groupId: string,
+        groupData: unknown,
+        siteId?: string,
+        customHeaders?: CustomHeaders
+    ): Promise<unknown> {
+        const resolvedSiteId = this.site.resolveSiteId(siteId);
+        const path = this.buildPath(
+            `/sites/${encodeURIComponent(resolvedSiteId)}/profiles/groups/${encodeURIComponent(groupType)}/${encodeURIComponent(groupId)}`
+        );
+        const response = await this.request.patch<OmadaApiResponse<unknown>>(path, groupData, customHeaders);
+        return this.request.ensureSuccess(response);
+    }
+
+    /**
+     * Delete an existing group profile by type and ID.
+     * OperationId: deleteGroupProfile
+     *
+     * @param groupType - Group type ('0'..'7' as string).
+     * @param groupId - Group profile ID to delete.
+     */
+    public async deleteGroupProfile(groupType: string, groupId: string, siteId?: string, customHeaders?: CustomHeaders): Promise<unknown> {
+        const resolvedSiteId = this.site.resolveSiteId(siteId);
+        const path = this.buildPath(
+            `/sites/${encodeURIComponent(resolvedSiteId)}/profiles/groups/${encodeURIComponent(groupType)}/${encodeURIComponent(groupId)}`
+        );
+        const response = await this.request.delete<OmadaApiResponse<unknown>>(path, customHeaders);
+        return this.request.ensureSuccess(response);
+    }
+
+    /**
      * Get application control status for a site.
      * OperationId: getApplicationControlStatus
      */

@@ -148,7 +148,8 @@ describe('tools/index', () => {
             expect(mockServer.registerTool).toHaveBeenCalledWith('getSitesHealthGatewaysWansDetails', expect.any(Object), expect.any(Function));
 
             // Verify total number of tools registered
-            expect(mockServer.registerTool).toHaveBeenCalledTimes(327);
+            // 327 baseline + 3 new (createGroupProfile, updateGroupProfile, deleteGroupProfile)
+            expect(mockServer.registerTool).toHaveBeenCalledTimes(330);
         });
     });
 });
