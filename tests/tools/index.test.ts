@@ -148,8 +148,8 @@ describe('tools/index', () => {
             expect(mockServer.registerTool).toHaveBeenCalledWith('getSitesHealthGatewaysWansDetails', expect.any(Object), expect.any(Function));
 
             // Verify total number of tools registered
-            // 327 baseline + 8 Tier 1 + 6 Tier 2 ACL + 3 Tier 3 time-range CRUD
-            expect(mockServer.registerTool).toHaveBeenCalledTimes(344);
+            // 327 baseline + 8 Tier 1 + 6 Tier 2 ACL + 3 Tier 3 time-range CRUD + 3 Tier 3 port schedule CRUD
+            expect(mockServer.registerTool).toHaveBeenCalledTimes(347);
         });
     });
 });

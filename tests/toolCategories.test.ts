@@ -273,13 +273,13 @@ describe('registerAllTools category filtering', () => {
         registerAllTools(mockServer, mockClient, activeCategories);
 
         expect((mockServer.registerTool as ReturnType<typeof vi.fn>).mock.calls.length).toBeGreaterThan(0);
-        // dashboard read tools are a subset of all 344 tools
-        expect((mockServer.registerTool as ReturnType<typeof vi.fn>).mock.calls.length).toBeLessThan(344);
+        // dashboard read tools are a subset of all 347 tools
+        expect((mockServer.registerTool as ReturnType<typeof vi.fn>).mock.calls.length).toBeLessThan(347);
     });
 
-    it('registers all 344 tools when no activeCategories provided', () => {
+    it('registers all 347 tools when no activeCategories provided', () => {
         registerAllTools(mockServer, mockClient);
-        expect(mockServer.registerTool).toHaveBeenCalledTimes(344);
+        expect(mockServer.registerTool).toHaveBeenCalledTimes(347);
     });
 
     it('registers zero tools when active categories map is empty', () => {
@@ -290,7 +290,7 @@ describe('registerAllTools category filtering', () => {
     it('registers all tools when all:rw is active', () => {
         const { categories: activeCategories } = parseToolCategories('all:rw');
         registerAllTools(mockServer, mockClient, activeCategories);
-        expect(mockServer.registerTool).toHaveBeenCalledTimes(344);
+        expect(mockServer.registerTool).toHaveBeenCalledTimes(347);
     });
 
     it('write-only filter registers only write tools for clients category', () => {

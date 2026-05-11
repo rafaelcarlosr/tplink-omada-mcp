@@ -590,6 +590,50 @@ export class NetworkOperations {
     }
 
     /**
+     * Create a port schedule (turns switch ports on/off on a schedule).
+     * OperationId: createPortSchedule
+     *
+     * @param body - Schedule body conforming to PortScheduleOpenApiVO. Required:
+     *   - name: 1-128 chars
+     *   - status: boolean (enabled)
+     *   - turnOnTime: time-range profile ID (see listTimeRangeProfiles)
+     *   - portsMap: object mapping switch MAC -> array of port IDs to schedule.
+     */
+    public async createPortSchedule(body: unknown, siteId?: string, customHeaders?: CustomHeaders): Promise<unknown> {
+        const resolvedSiteId = this.site.resolveSiteId(siteId);
+        const path = this.buildPath(`/sites/${encodeURIComponent(resolvedSiteId)}/port-schedules`);
+        const response = await this.request.post<OmadaApiResponse<unknown>>(path, body, customHeaders);
+        return this.request.ensureSuccess(response);
+    }
+
+    /**
+     * Modify a port schedule by ID. PUT full-replacement semantics.
+     * OperationId: modifyPortSchedule
+     *
+     * @param portScheduleId - Schedule ID (from listPortSchedules).
+     * @param body - Same shape as createPortSchedule.
+     */
+    public async modifyPortSchedule(portScheduleId: string, body: unknown, siteId?: string, customHeaders?: CustomHeaders): Promise<unknown> {
+        const resolvedSiteId = this.site.resolveSiteId(siteId);
+        const path = this.buildPath(`/sites/${encodeURIComponent(resolvedSiteId)}/port-schedules/${encodeURIComponent(portScheduleId)}`);
+        const response = await this.request.put<OmadaApiResponse<unknown>>(path, body, customHeaders);
+        return this.request.ensureSuccess(response);
+    }
+
+    /**
+     * Delete a port schedule by ID.
+     * OperationId: deletePortSchedule
+     *
+     * @param portScheduleId - Schedule ID (from listPortSchedules).
+     */
+    public async deletePortSchedule(portScheduleId: string, siteId?: string, customHeaders?: CustomHeaders): Promise<unknown> {
+        const resolvedSiteId = this.site.resolveSiteId(siteId);
+        const path = this.buildPath(`/sites/${encodeURIComponent(resolvedSiteId)}/port-schedules/${encodeURIComponent(portScheduleId)}`);
+        const response = await this.request.delete<OmadaApiResponse<unknown>>(path, customHeaders);
+        return this.request.ensureSuccess(response);
+    }
+
+    /**
      * List PoE schedules.
      * OperationId: getPoeScheduleList
      */

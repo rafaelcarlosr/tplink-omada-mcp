@@ -513,6 +513,9 @@ In client-credentials mode the server already treats `Mcp-Session-Id` as optiona
 | `getPoeScheduleList` | List PoE schedules for a site. |
 | `getPortScheduleList` | List port schedules for a site. |
 | `getPortSchedulePorts` | List ports with port schedule assignments for a site. |
+| `createPortSchedule` | Creates a port schedule (switch ports on/off on a time-range schedule). |
+| `modifyPortSchedule` | Modifies a port schedule by `portScheduleId` (PUT full-replacement). |
+| `deletePortSchedule` | Deletes a port schedule by `portScheduleId`. |
 | `getRebootScheduleList` | List device reboot schedules for a site template. Requires `siteTemplateId`. |
 | `getUpgradeScheduleList` | List firmware upgrade schedules for a site. |
 ## Supported Omada API Operations
@@ -838,6 +841,9 @@ In client-credentials mode the server already treats `Mcp-Session-Id` as optiona
 | `getPoeScheduleList` | List PoE schedules for a site. | `getPoeScheduleList` |
 | `getPortScheduleList` | List port schedules for a site. | `getPortScheduleList` |
 | `getPortSchedulePorts` | List ports with port schedules. | `getPortSchedulePorts` |
+| `createPortSchedule` | Create a port schedule (switch ports on/off on a time range). Required: name, status, turnOnTime (time range profile ID), portsMap (switch MAC -> port IDs). | `createPortSchedule` |
+| `modifyPortSchedule` | Modify a port schedule by `portScheduleId` (PUT, full-replacement). Same body shape as create. | `modifyPortSchedule` |
+| `deletePortSchedule` | Delete a port schedule by `portScheduleId`. | `deletePortSchedule` |
 | `getMulticastRateLimitByOpenApi` | Get multicast rate limit setting. | `getMulticastRateLimit` |
 | `getApLoadBalanceConfig` | Get AP load balance configuration. | `getApLoadBalance` |
 | `getApOfdmaConfig` | [DEPRECATED] Use `getSitesApsOfdma` instead. Same endpoint, retained for backward compatibility. getSitesApsOfdma is the canonical tool name. | `getApOfdmaConfig` |

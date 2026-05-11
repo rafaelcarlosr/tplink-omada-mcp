@@ -1085,6 +1085,146 @@ describe('NetworkOperations', () => {
         });
     });
 
+    describe('createPortSchedule', () => {
+        const sampleBody = {
+            name: 'Office Hours Ports',
+            status: true,
+            turnOnTime: 'tr-1',
+            portsMap: { 'AA-BB-CC-11-22-33': [1, 2, 3] },
+        };
+
+        it('should POST to port-schedules', async () => {
+            const mockResult = { id: 'ps-1' };
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: mockResult };
+            vi.mocked(mockRequest.post).mockResolvedValue(mockResponse);
+
+            const result = await networkOps.createPortSchedule(sampleBody, 'site-123');
+
+            expect(mockSite.resolveSiteId).toHaveBeenCalledWith('site-123');
+            expect(mockRequest.post).toHaveBeenCalledWith('/openapi/v1/test-omadac/sites/site-123/port-schedules', sampleBody, undefined);
+            expect(result).toEqual(mockResult);
+        });
+
+        it('should pass custom headers', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: {} };
+            vi.mocked(mockRequest.post).mockResolvedValue(mockResponse);
+            const headers = { 'X-Custom': 'v' };
+            await networkOps.createPortSchedule(sampleBody, 'site-123', headers);
+            expect(mockRequest.post).toHaveBeenCalledWith(expect.any(String), sampleBody, headers);
+        });
+
+        it('should use default site if siteId not provided', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: {} };
+            vi.mocked(mockRequest.post).mockResolvedValue(mockResponse);
+            await networkOps.createPortSchedule(sampleBody);
+            expect(mockSite.resolveSiteId).toHaveBeenCalledWith(undefined);
+            expect(mockRequest.post).toHaveBeenCalledWith('/openapi/v1/test-omadac/sites/default-site/port-schedules', sampleBody, undefined);
+        });
+
+        it('should propagate API errors', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: -1001, msg: 'Invalid request parameters.', result: null };
+            vi.mocked(mockRequest.post).mockResolvedValue(mockResponse);
+            await expect(networkOps.createPortSchedule(sampleBody, 'site-123')).rejects.toThrow('Invalid request parameters.');
+        });
+    });
+
+    describe('modifyPortSchedule', () => {
+        const sampleBody = {
+            name: 'Office Hours Ports',
+            status: false,
+            turnOnTime: 'tr-1',
+            portsMap: { 'AA-BB-CC-11-22-33': [1, 2] },
+        };
+
+        it('should PUT to port-schedules/{id}', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: { id: 'ps-1' } };
+            vi.mocked(mockRequest.put).mockResolvedValue(mockResponse);
+
+            const result = await networkOps.modifyPortSchedule('ps-1', sampleBody, 'site-123');
+
+            expect(mockRequest.put).toHaveBeenCalledWith('/openapi/v1/test-omadac/sites/site-123/port-schedules/ps-1', sampleBody, undefined);
+            expect(result).toEqual({ id: 'ps-1' });
+        });
+
+        it('should URL-encode special chars in portScheduleId', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: {} };
+            vi.mocked(mockRequest.put).mockResolvedValue(mockResponse);
+            await networkOps.modifyPortSchedule('ps/with spaces', sampleBody, 'site-123');
+            expect(mockRequest.put).toHaveBeenCalledWith(
+                '/openapi/v1/test-omadac/sites/site-123/port-schedules/ps%2Fwith%20spaces',
+                sampleBody,
+                undefined
+            );
+        });
+
+        it('should pass custom headers', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: {} };
+            vi.mocked(mockRequest.put).mockResolvedValue(mockResponse);
+            const headers = { 'X-Custom': 'v' };
+            await networkOps.modifyPortSchedule('ps-1', sampleBody, 'site-123', headers);
+            expect(mockRequest.put).toHaveBeenCalledWith(expect.any(String), sampleBody, headers);
+        });
+
+        it('should use default site if siteId not provided', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: {} };
+            vi.mocked(mockRequest.put).mockResolvedValue(mockResponse);
+            await networkOps.modifyPortSchedule('ps-1', sampleBody);
+            expect(mockSite.resolveSiteId).toHaveBeenCalledWith(undefined);
+            expect(mockRequest.put).toHaveBeenCalledWith('/openapi/v1/test-omadac/sites/default-site/port-schedules/ps-1', sampleBody, undefined);
+        });
+
+        it('should propagate API errors', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: -1001, msg: 'Invalid request parameters.', result: null };
+            vi.mocked(mockRequest.put).mockResolvedValue(mockResponse);
+            await expect(networkOps.modifyPortSchedule('ps-1', sampleBody, 'site-123')).rejects.toThrow('Invalid request parameters.');
+        });
+    });
+
+    describe('deletePortSchedule', () => {
+        it('should DELETE port-schedules/{id}', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: {} };
+            vi.mocked(mockRequest.delete).mockResolvedValue(mockResponse);
+
+            const result = await networkOps.deletePortSchedule('ps-1', 'site-123');
+
+            expect(mockRequest.delete).toHaveBeenCalledWith('/openapi/v1/test-omadac/sites/site-123/port-schedules/ps-1', undefined);
+            expect(result).toEqual({});
+        });
+
+        it('should pass custom headers', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: {} };
+            vi.mocked(mockRequest.delete).mockResolvedValue(mockResponse);
+            const headers = { 'X-Custom': 'v' };
+            await networkOps.deletePortSchedule('ps-1', 'site-123', headers);
+            expect(mockRequest.delete).toHaveBeenCalledWith(expect.any(String), headers);
+        });
+
+        it('should use default site if siteId not provided', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: {} };
+            vi.mocked(mockRequest.delete).mockResolvedValue(mockResponse);
+            await networkOps.deletePortSchedule('ps-1');
+            expect(mockSite.resolveSiteId).toHaveBeenCalledWith(undefined);
+            expect(mockRequest.delete).toHaveBeenCalledWith('/openapi/v1/test-omadac/sites/default-site/port-schedules/ps-1', undefined);
+        });
+
+        it('should URL-encode special chars in portScheduleId', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: {} };
+            vi.mocked(mockRequest.delete).mockResolvedValue(mockResponse);
+            await networkOps.deletePortSchedule('ps/with spaces', 'site-123');
+            expect(mockRequest.delete).toHaveBeenCalledWith('/openapi/v1/test-omadac/sites/site-123/port-schedules/ps%2Fwith%20spaces', undefined);
+        });
+
+        it('should propagate API errors', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = {
+                errorCode: -34555,
+                msg: 'Cannot delete the time range. It is being used in Port Schedule.',
+                result: null,
+            };
+            vi.mocked(mockRequest.delete).mockResolvedValue(mockResponse);
+            await expect(networkOps.deletePortSchedule('ps-1', 'site-123')).rejects.toThrow('Cannot delete');
+        });
+    });
+
     describe('listPoeSchedules', () => {
         it('should list PoE schedules', async () => {
             const mockData = [{ id: 'poe-1', name: 'PoE Schedule 1' }];

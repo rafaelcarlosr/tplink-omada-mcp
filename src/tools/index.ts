@@ -5,12 +5,14 @@ import type { OmadaClient } from '../omadaClient/index.js';
 import { logger } from '../utils/logger.js';
 import { registerBatchDeleteOsgCustomAclsTool } from './batchDeleteOsgCustomAcls.js';
 import { registerCreateGroupProfileTool } from './createGroupProfile.js';
+import { registerCreatePortScheduleTool } from './createPortSchedule.js';
 import { registerCreateTimeRangeProfileTool } from './createTimeRangeProfile.js';
 import { registerDeleteAclTool } from './deleteAcl.js';
 import { registerDeleteDhcpReservationTool } from './deleteDhcpReservation.js';
 import { registerDeleteGroupProfileTool } from './deleteGroupProfile.js';
 import { registerDeleteLanNetworkTool } from './deleteLanNetwork.js';
 import { registerDeleteLanProfileTool } from './deleteLanProfile.js';
+import { registerDeletePortScheduleTool } from './deletePortSchedule.js';
 import { registerDeleteTimeRangeProfileTool } from './deleteTimeRangeProfile.js';
 import { registerDisableClientRateLimitTool } from './disableClientRateLimit.js';
 import { registerGetAccessControlTool } from './getAccessControl.js';
@@ -340,6 +342,7 @@ import { registerModifyAclIndexTool } from './modifyAclIndex.js';
 import { registerModifyEapAclTool } from './modifyEapAcl.js';
 import { registerModifyOsgAclTool } from './modifyOsgAcl.js';
 import { registerModifyOswAclTool } from './modifyOswAcl.js';
+import { registerModifyPortScheduleTool } from './modifyPortSchedule.js';
 import { registerModifyTimeRangeProfileTool } from './modifyTimeRangeProfile.js';
 import { registerSearchDevicesTool } from './searchDevices.js';
 import { registerSetClientRateLimitTool } from './setClientRateLimit.js';
@@ -747,6 +750,9 @@ const TOOL_REGISTRY: ToolEntry[] = [
     { fn: registerGetPoeScheduleListTool, category: 'schedules', permission: 'read' },
     { fn: registerGetPortScheduleListTool, category: 'schedules', permission: 'read' },
     { fn: registerGetPortSchedulePortsTool, category: 'schedules', permission: 'read' },
+    { fn: registerCreatePortScheduleTool, category: 'schedules', permission: 'write' },
+    { fn: registerModifyPortScheduleTool, category: 'schedules', permission: 'write' },
+    { fn: registerDeletePortScheduleTool, category: 'schedules', permission: 'write' },
 
     // --- Site templates ---
     { fn: registerGetSiteTemplateListTool, category: 'sites', permission: 'read' },

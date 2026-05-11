@@ -858,6 +858,18 @@ export class OmadaClient {
         return await this.networkOps.listPortSchedules(siteId, customHeaders);
     }
 
+    public async createPortSchedule(body: unknown, siteId?: string, customHeaders?: CustomHeaders): Promise<unknown> {
+        return await this.networkOps.createPortSchedule(body, siteId, customHeaders);
+    }
+
+    public async modifyPortSchedule(portScheduleId: string, body: unknown, siteId?: string, customHeaders?: CustomHeaders): Promise<unknown> {
+        return await this.networkOps.modifyPortSchedule(portScheduleId, body, siteId, customHeaders);
+    }
+
+    public async deletePortSchedule(portScheduleId: string, siteId?: string, customHeaders?: CustomHeaders): Promise<unknown> {
+        return await this.networkOps.deletePortSchedule(portScheduleId, siteId, customHeaders);
+    }
+
     public async listPoeSchedules(siteId?: string, customHeaders?: CustomHeaders): Promise<unknown[]> {
         return await this.networkOps.listPoeSchedules(siteId, customHeaders);
     }
