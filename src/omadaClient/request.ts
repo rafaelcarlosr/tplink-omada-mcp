@@ -31,6 +31,28 @@ export class RequestHandler {
     }
 
     /**
+     * Make a POST request to the Omada API. Used for create operations.
+     */
+    public async post<T>(path: string, data?: unknown, customHeaders?: CustomHeaders): Promise<T> {
+        return await this.request<T>({ method: 'POST', url: path, data }, true, customHeaders);
+    }
+
+    /**
+     * Make a PUT request to the Omada API. Used for some update operations
+     * (e.g., schedule profile modify, port schedule modify).
+     */
+    public async put<T>(path: string, data?: unknown, customHeaders?: CustomHeaders): Promise<T> {
+        return await this.request<T>({ method: 'PUT', url: path, data }, true, customHeaders);
+    }
+
+    /**
+     * Make a DELETE request to the Omada API.
+     */
+    public async delete<T>(path: string, customHeaders?: CustomHeaders): Promise<T> {
+        return await this.request<T>({ method: 'DELETE', url: path }, true, customHeaders);
+    }
+
+    /**
      * Make an arbitrary HTTP request to the Omada API.
      */
     public async request<T>(config: AxiosRequestConfig, retry = true, customHeaders?: CustomHeaders): Promise<T> {

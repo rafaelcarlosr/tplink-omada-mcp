@@ -3,6 +3,8 @@ import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type { ToolCategory, ToolPermission } from '../config.js';
 import type { OmadaClient } from '../omadaClient/index.js';
 import { logger } from '../utils/logger.js';
+import { registerCreateGroupProfileTool } from './createGroupProfile.js';
+import { registerDeleteGroupProfileTool } from './deleteGroupProfile.js';
 import { registerDisableClientRateLimitTool } from './disableClientRateLimit.js';
 import { registerGetAccessControlTool } from './getAccessControl.js';
 import { registerGetAclConfigTypeSettingTool } from './getAclConfigTypeSetting.js';
@@ -330,6 +332,7 @@ import { registerListWireguardPeersTool } from './listWireguardPeers.js';
 import { registerSearchDevicesTool } from './searchDevices.js';
 import { registerSetClientRateLimitTool } from './setClientRateLimit.js';
 import { registerSetClientRateLimitProfileTool } from './setClientRateLimitProfile.js';
+import { registerUpdateGroupProfileTool } from './updateGroupProfile.js';
 
 // ---------------------------------------------------------------------------
 // Tool registry: each entry maps a register-function to its category and
@@ -645,6 +648,9 @@ const TOOL_REGISTRY: ToolEntry[] = [
     { fn: registerGetVlanProfileTool, category: 'profiles', permission: 'read' },
     { fn: registerGetUserRoleProfileTool, category: 'profiles', permission: 'read' },
     { fn: registerGetPortalProfileTool, category: 'profiles', permission: 'read' },
+    { fn: registerCreateGroupProfileTool, category: 'profiles', permission: 'write' },
+    { fn: registerUpdateGroupProfileTool, category: 'profiles', permission: 'write' },
+    { fn: registerDeleteGroupProfileTool, category: 'profiles', permission: 'write' },
 
     // --- Auth profiles ---
     { fn: registerGetLdapProfileListTool, category: 'auth-profiles', permission: 'read' },

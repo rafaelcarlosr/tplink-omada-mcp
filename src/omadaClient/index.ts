@@ -768,6 +768,24 @@ export class OmadaClient {
         return await this.networkOps.listGroupProfiles(groupType, siteId, customHeaders);
     }
 
+    public async createGroupProfile(groupData: unknown, siteId?: string, customHeaders?: CustomHeaders): Promise<unknown> {
+        return await this.networkOps.createGroupProfile(groupData, siteId, customHeaders);
+    }
+
+    public async updateGroupProfile(
+        groupType: string,
+        groupId: string,
+        groupData: unknown,
+        siteId?: string,
+        customHeaders?: CustomHeaders
+    ): Promise<unknown> {
+        return await this.networkOps.updateGroupProfile(groupType, groupId, groupData, siteId, customHeaders);
+    }
+
+    public async deleteGroupProfile(groupType: string, groupId: string, siteId?: string, customHeaders?: CustomHeaders): Promise<unknown> {
+        return await this.networkOps.deleteGroupProfile(groupType, groupId, siteId, customHeaders);
+    }
+
     public async getApplicationControlStatus(siteId?: string, customHeaders?: CustomHeaders): Promise<unknown> {
         return await this.networkOps.getApplicationControlStatus(siteId, customHeaders);
     }

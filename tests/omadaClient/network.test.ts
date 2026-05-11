@@ -14,6 +14,10 @@ describe('NetworkOperations', () => {
     beforeEach(() => {
         mockRequest = {
             get: vi.fn(),
+            post: vi.fn(),
+            patch: vi.fn(),
+            put: vi.fn(),
+            delete: vi.fn(),
             fetchPaginated: vi.fn(),
             ensureSuccess: vi.fn((response: OmadaApiResponse<unknown>) => {
                 if (response.errorCode === 0) {
@@ -1804,6 +1808,145 @@ describe('NetworkOperations', () => {
             const result = await networkOps.getPortalProfile('site-123');
             expect(mockRequest.get).toHaveBeenCalledWith('/openapi/v1/test-omadac/sites/site-123/portals', undefined, undefined);
             expect(result).toEqual([]);
+        });
+    });
+
+    describe('createGroupProfile', () => {
+        it('should POST a new IP group profile', async () => {
+            const groupData = {
+                name: 'IPG_TEST',
+                type: 0,
+                ipList: [{ ip: '192.168.1.0', mask: 24 }],
+            };
+            const mockResult = { id: 'new-group-id', ...groupData };
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: mockResult };
+            vi.mocked(mockRequest.post).mockResolvedValue(mockResponse);
+
+            const result = await networkOps.createGroupProfile(groupData, 'site-123');
+
+            expect(mockSite.resolveSiteId).toHaveBeenCalledWith('site-123');
+            expect(mockRequest.post).toHaveBeenCalledWith('/openapi/v1/test-omadac/sites/site-123/profiles/groups', groupData, undefined);
+            expect(result).toEqual(mockResult);
+        });
+
+        it('should pass custom headers', async () => {
+            const groupData = { name: 'g', type: 2, macAddressList: [{ mac: 'AA:BB:CC:DD:EE:FF' }] };
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: { id: 'm' } };
+            vi.mocked(mockRequest.post).mockResolvedValue(mockResponse);
+
+            const headers = { 'X-Custom': 'v' };
+            await networkOps.createGroupProfile(groupData, 'site-123', headers);
+
+            expect(mockRequest.post).toHaveBeenCalledWith(expect.any(String), groupData, headers);
+        });
+
+        it('should use default site if siteId not provided', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: {} };
+            vi.mocked(mockRequest.post).mockResolvedValue(mockResponse);
+
+            await networkOps.createGroupProfile({ name: 'g', type: 0 });
+
+            expect(mockSite.resolveSiteId).toHaveBeenCalledWith(undefined);
+            expect(mockRequest.post).toHaveBeenCalledWith(
+                '/openapi/v1/test-omadac/sites/default-site/profiles/groups',
+                { name: 'g', type: 0 },
+                undefined
+            );
+        });
+
+        it('should propagate API errors via ensureSuccess', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: -1001, msg: 'Bad request', result: null };
+            vi.mocked(mockRequest.post).mockResolvedValue(mockResponse);
+
+            await expect(networkOps.createGroupProfile({ name: 'g', type: 0 }, 'site-123')).rejects.toThrow('Bad request');
+        });
+    });
+
+    describe('updateGroupProfile', () => {
+        it('should PATCH an existing group profile by type and id', async () => {
+            const groupData = {
+                name: 'IPG_UPDATED',
+                type: 0,
+                ipList: [{ ip: '10.0.0.0', mask: 8 }],
+            };
+            const mockResult = { id: 'group-1', ...groupData };
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: mockResult };
+            vi.mocked(mockRequest.patch).mockResolvedValue(mockResponse);
+
+            const result = await networkOps.updateGroupProfile('0', 'group-1', groupData, 'site-123');
+
+            expect(mockRequest.patch).toHaveBeenCalledWith('/openapi/v1/test-omadac/sites/site-123/profiles/groups/0/group-1', groupData, undefined);
+            expect(result).toEqual(mockResult);
+        });
+
+        it('should URL-encode special chars in groupId', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: {} };
+            vi.mocked(mockRequest.patch).mockResolvedValue(mockResponse);
+
+            await networkOps.updateGroupProfile('0', 'has space', { name: 'x', type: 0 }, 'site-123');
+
+            expect(mockRequest.patch).toHaveBeenCalledWith(
+                '/openapi/v1/test-omadac/sites/site-123/profiles/groups/0/has%20space',
+                { name: 'x', type: 0 },
+                undefined
+            );
+        });
+
+        it('should pass custom headers', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: {} };
+            vi.mocked(mockRequest.patch).mockResolvedValue(mockResponse);
+            const headers = { 'X-Custom': 'v' };
+            await networkOps.updateGroupProfile('0', 'g1', { name: 'x', type: 0 }, 'site-123', headers);
+            expect(mockRequest.patch).toHaveBeenCalledWith(expect.any(String), { name: 'x', type: 0 }, headers);
+        });
+
+        it('should use default site if siteId not provided', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: {} };
+            vi.mocked(mockRequest.patch).mockResolvedValue(mockResponse);
+            await networkOps.updateGroupProfile('0', 'g1', { name: 'x', type: 0 });
+            expect(mockSite.resolveSiteId).toHaveBeenCalledWith(undefined);
+            expect(mockRequest.patch).toHaveBeenCalledWith(
+                '/openapi/v1/test-omadac/sites/default-site/profiles/groups/0/g1',
+                { name: 'x', type: 0 },
+                undefined
+            );
+        });
+    });
+
+    describe('deleteGroupProfile', () => {
+        it('should DELETE a group profile by type and id', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: {} };
+            vi.mocked(mockRequest.delete).mockResolvedValue(mockResponse);
+
+            const result = await networkOps.deleteGroupProfile('0', 'group-1', 'site-123');
+
+            expect(mockRequest.delete).toHaveBeenCalledWith('/openapi/v1/test-omadac/sites/site-123/profiles/groups/0/group-1', undefined);
+            expect(result).toEqual({});
+        });
+
+        it('should pass custom headers', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: {} };
+            vi.mocked(mockRequest.delete).mockResolvedValue(mockResponse);
+            const headers = { 'X-Custom': 'v' };
+            await networkOps.deleteGroupProfile('0', 'g1', 'site-123', headers);
+            expect(mockRequest.delete).toHaveBeenCalledWith(expect.any(String), headers);
+        });
+
+        it('should use default site if siteId not provided', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: {} };
+            vi.mocked(mockRequest.delete).mockResolvedValue(mockResponse);
+
+            await networkOps.deleteGroupProfile('0', 'g1');
+
+            expect(mockSite.resolveSiteId).toHaveBeenCalledWith(undefined);
+            expect(mockRequest.delete).toHaveBeenCalledWith('/openapi/v1/test-omadac/sites/default-site/profiles/groups/0/g1', undefined);
+        });
+
+        it('should propagate API errors', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: -33215, msg: 'Group profile not found', result: null };
+            vi.mocked(mockRequest.delete).mockResolvedValue(mockResponse);
+
+            await expect(networkOps.deleteGroupProfile('0', 'nonexistent', 'site-123')).rejects.toThrow('Group profile not found');
         });
     });
 });
