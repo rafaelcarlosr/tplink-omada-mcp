@@ -4,6 +4,7 @@ import type { ToolCategory, ToolPermission } from '../config.js';
 import type { OmadaClient } from '../omadaClient/index.js';
 import { logger } from '../utils/logger.js';
 import { registerCreateGroupProfileTool } from './createGroupProfile.js';
+import { registerDeleteAclTool } from './deleteAcl.js';
 import { registerDeleteDhcpReservationTool } from './deleteDhcpReservation.js';
 import { registerDeleteGroupProfileTool } from './deleteGroupProfile.js';
 import { registerDeleteLanNetworkTool } from './deleteLanNetwork.js';
@@ -583,6 +584,7 @@ const TOOL_REGISTRY: ToolEntry[] = [
     { fn: registerGetDot1xConfigTool, category: 'firewall-acl', permission: 'read' },
     { fn: registerGetRadiusProxyConfigTool, category: 'firewall-acl', permission: 'read' },
     { fn: registerGetApplicationAclTool, category: 'firewall-acl', permission: 'read' },
+    { fn: registerDeleteAclTool, category: 'firewall-acl', permission: 'write' },
 
     // --- Firewall traffic ---
     { fn: registerGetUrlFilterGeneralTool, category: 'firewall-traffic', permission: 'read' },

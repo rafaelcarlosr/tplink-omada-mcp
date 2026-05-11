@@ -483,6 +483,51 @@ describe('NetworkOperations', () => {
         });
     });
 
+    describe('deleteAcl', () => {
+        it('should DELETE an ACL rule by ID', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: {} };
+            vi.mocked(mockRequest.delete).mockResolvedValue(mockResponse);
+
+            const result = await networkOps.deleteAcl('acl-xyz', 'site-123');
+
+            expect(mockSite.resolveSiteId).toHaveBeenCalledWith('site-123');
+            expect(mockRequest.delete).toHaveBeenCalledWith('/openapi/v1/test-omadac/sites/site-123/acls/acl-xyz', undefined);
+            expect(result).toEqual({});
+        });
+
+        it('should pass custom headers', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: {} };
+            vi.mocked(mockRequest.delete).mockResolvedValue(mockResponse);
+            const headers = { 'X-Custom': 'v' };
+            await networkOps.deleteAcl('acl-xyz', 'site-123', headers);
+            expect(mockRequest.delete).toHaveBeenCalledWith(expect.any(String), headers);
+        });
+
+        it('should use default site if siteId not provided', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: {} };
+            vi.mocked(mockRequest.delete).mockResolvedValue(mockResponse);
+
+            await networkOps.deleteAcl('acl-xyz');
+
+            expect(mockSite.resolveSiteId).toHaveBeenCalledWith(undefined);
+            expect(mockRequest.delete).toHaveBeenCalledWith('/openapi/v1/test-omadac/sites/default-site/acls/acl-xyz', undefined);
+        });
+
+        it('should URL-encode special chars in aclId path segment', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: {} };
+            vi.mocked(mockRequest.delete).mockResolvedValue(mockResponse);
+            await networkOps.deleteAcl('acl/with spaces&!', 'site-123');
+            expect(mockRequest.delete).toHaveBeenCalledWith('/openapi/v1/test-omadac/sites/site-123/acls/acl%2Fwith%20spaces%26!', undefined);
+        });
+
+        it('should propagate API errors via ensureSuccess', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: -1001, msg: 'Invalid request parameters.', result: null };
+            vi.mocked(mockRequest.delete).mockResolvedValue(mockResponse);
+
+            await expect(networkOps.deleteAcl('acl-missing', 'site-123')).rejects.toThrow('Invalid request parameters.');
+        });
+    });
+
     describe('listStaticRoutes', () => {
         it('should list static routing rules', async () => {
             const mockData = [{ id: 'route-1', destination: '10.0.0.0/24' }];

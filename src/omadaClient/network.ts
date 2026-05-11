@@ -269,6 +269,19 @@ export class NetworkOperations {
     }
 
     /**
+     * Delete an ACL rule by ID. Works for gateway (osg), EAP, and switch (osw) ACLs.
+     * OperationId: deleteAcl
+     *
+     * @param aclId - ACL rule ID (returned by listOsgAcls / listEapAcls / listOswAcls).
+     */
+    public async deleteAcl(aclId: string, siteId?: string, customHeaders?: CustomHeaders): Promise<unknown> {
+        const resolvedSiteId = this.site.resolveSiteId(siteId);
+        const path = this.buildPath(`/sites/${encodeURIComponent(resolvedSiteId)}/acls/${encodeURIComponent(aclId)}`);
+        const response = await this.request.delete<OmadaApiResponse<unknown>>(path, customHeaders);
+        return this.request.ensureSuccess(response);
+    }
+
+    /**
      * List static routing rules.
      * OperationId: getStaticRoutingList
      */
