@@ -345,6 +345,23 @@ export class NetworkOperations {
     }
 
     /**
+     * Reorder ACL rules (rule priority). Works for gateway, switch, and EAP ACLs.
+     * OperationId: modifyAclIndex
+     *
+     * @param body - DragSortIndexOpenapiVO body. Required:
+     *   - type: 'gateway' | 'switch' | 'eap' — which ACL family to reorder.
+     *   - indexes: object map. Key = ACL rule ID, value = integer index (rule priority — lower index = higher priority).
+     *
+     * Order in Omada equals priority — rule index 0 is evaluated first.
+     */
+    public async modifyAclIndex(body: unknown, siteId?: string, customHeaders?: CustomHeaders): Promise<unknown> {
+        const resolvedSiteId = this.site.resolveSiteId(siteId);
+        const path = this.buildPath(`/sites/${encodeURIComponent(resolvedSiteId)}/acls/modifyIndex`);
+        const response = await this.request.post<OmadaApiResponse<unknown>>(path, body, customHeaders);
+        return this.request.ensureSuccess(response);
+    }
+
+    /**
      * List static routing rules.
      * OperationId: getStaticRoutingList
      */

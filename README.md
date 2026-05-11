@@ -500,6 +500,7 @@ In client-credentials mode the server already treats `Mcp-Session-Id` as optiona
 | `modifyEapAcl` | Modifies an EAP (access point) ACL rule by `aclId`. PUT full-replacement; simpler body than gateway (no direction/state/syslog). |
 | `modifyOswAcl` | Modifies a switch (OSW) ACL rule by `aclId`. PUT full-replacement; L2 rule with port/VLAN binding and ethertype filter. |
 | `batchDeleteOsgCustomAcls` | Bulk-deletes gateway (OSG) custom ACL rules. `selectType=all\|include\|exclude` controls which rules are deleted. |
+| `modifyAclIndex` | Reorders ACL rules (rule order = priority). `type=gateway\|switch\|eap`; `indexes` is a map of rule ID to new index. |
 | `listStaticRoutes` | [DEPRECATED] Use `getGridStaticRouting` instead. This tool aggregates all pages; getGridStaticRouting returns a single paginated page. |
 | `getStaticRoutingInterfaceList` | Gets available interfaces for static routing.                             |
 | `listPolicyRoutes` | [DEPRECATED] Use `getGridPolicyRouting` instead. This tool aggregates all pages; getGridPolicyRouting is paginated. |
@@ -778,6 +779,7 @@ In client-credentials mode the server already treats `Mcp-Session-Id` as optiona
 | `modifyEapAcl` | Modify an EAP (access point) ACL rule by `aclId` (PUT, full-replacement). Required: description, status, policy, protocols, sourceType, sourceIds, destinationType. | `modifyEapAcl` |
 | `modifyOswAcl` | Modify a switch (OSW) ACL rule by `aclId` (PUT, full-replacement). L2 rule with port/VLAN binding. Required: description, status, policy, protocols, sourceType, sourceIds, destinationType, bindingType, etherType. | `modifyOswAcl` |
 | `batchDeleteOsgCustomAcls` | Bulk-delete gateway (OSG) custom ACL rules. `selectType=all` deletes every rule; `include` deletes the listed ids; `exclude` deletes every rule except the listed ids. | `batchDeleteOsgCustomAcls` |
+| `modifyAclIndex` | Reorder ACL rules — rule index = priority (index 0 evaluated first). `type` selects the ACL family; `indexes` is a map from rule ID to new index. | `modifyAclIndex` |
 | `getDnsCacheSetting` | Get DNS cache setting for the site gateway. | `getDnsCacheSetting` |
 | `getDnsProxy` | Get DNS proxy configuration for the site gateway. | `getDnsProxy` |
 | `getFirewallSetting` | Get firewall configuration and rules for a site, including ACL rule.... | `getFirewallSetting` |

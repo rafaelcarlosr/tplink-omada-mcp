@@ -757,6 +757,46 @@ describe('NetworkOperations', () => {
         });
     });
 
+    describe('modifyAclIndex', () => {
+        const sampleBody = { type: 'gateway', indexes: { 'acl-a': 0, 'acl-b': 1, 'acl-c': 2 } };
+
+        it('should POST to the acls/modifyIndex path with the body', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: {} };
+            vi.mocked(mockRequest.post).mockResolvedValue(mockResponse);
+
+            const result = await networkOps.modifyAclIndex(sampleBody, 'site-123');
+
+            expect(mockSite.resolveSiteId).toHaveBeenCalledWith('site-123');
+            expect(mockRequest.post).toHaveBeenCalledWith('/openapi/v1/test-omadac/sites/site-123/acls/modifyIndex', sampleBody, undefined);
+            expect(result).toEqual({});
+        });
+
+        it('should pass custom headers', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: {} };
+            vi.mocked(mockRequest.post).mockResolvedValue(mockResponse);
+            const headers = { 'X-Custom': 'v' };
+            await networkOps.modifyAclIndex(sampleBody, 'site-123', headers);
+            expect(mockRequest.post).toHaveBeenCalledWith(expect.any(String), sampleBody, headers);
+        });
+
+        it('should use default site if siteId not provided', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: {} };
+            vi.mocked(mockRequest.post).mockResolvedValue(mockResponse);
+
+            await networkOps.modifyAclIndex(sampleBody);
+
+            expect(mockSite.resolveSiteId).toHaveBeenCalledWith(undefined);
+            expect(mockRequest.post).toHaveBeenCalledWith('/openapi/v1/test-omadac/sites/default-site/acls/modifyIndex', sampleBody, undefined);
+        });
+
+        it('should propagate API errors via ensureSuccess', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: -1001, msg: 'Invalid request parameters.', result: null };
+            vi.mocked(mockRequest.post).mockResolvedValue(mockResponse);
+
+            await expect(networkOps.modifyAclIndex(sampleBody, 'site-123')).rejects.toThrow('Invalid request parameters.');
+        });
+    });
+
     describe('listStaticRoutes', () => {
         it('should list static routing rules', async () => {
             const mockData = [{ id: 'route-1', destination: '10.0.0.0/24' }];
