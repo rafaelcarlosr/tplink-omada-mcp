@@ -1225,6 +1225,80 @@ describe('NetworkOperations', () => {
         });
     });
 
+    describe('updateSsidBasicConfig', () => {
+        const sampleBody = {
+            name: 'HomeWifi',
+            band: 7,
+            broadcast: true,
+            guestNetEnable: false,
+            security: 3,
+            mloEnable: false,
+            pmfMode: 2,
+            enable11r: false,
+            vlanEnable: true,
+            vlanId: 10,
+            pskSetting: { wpaMode: 4, psk: 'placeholder' },
+        };
+
+        it('should PATCH the update-basic-config sub-path', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: {} };
+            vi.mocked(mockRequest.patch).mockResolvedValue(mockResponse);
+
+            const result = await networkOps.updateSsidBasicConfig('wlan-1', 'ssid-1', sampleBody, 'site-123');
+
+            expect(mockSite.resolveSiteId).toHaveBeenCalledWith('site-123');
+            expect(mockRequest.patch).toHaveBeenCalledWith(
+                '/openapi/v1/test-omadac/sites/site-123/wireless-network/wlans/wlan-1/ssids/ssid-1/update-basic-config',
+                sampleBody,
+                undefined
+            );
+            expect(result).toEqual({});
+        });
+
+        it('should URL-encode special chars in wlanId and ssidId', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: {} };
+            vi.mocked(mockRequest.patch).mockResolvedValue(mockResponse);
+
+            await networkOps.updateSsidBasicConfig('wlan/with space', 'ssid&special', sampleBody, 'site-123');
+            expect(mockRequest.patch).toHaveBeenCalledWith(
+                '/openapi/v1/test-omadac/sites/site-123/wireless-network/wlans/wlan%2Fwith%20space/ssids/ssid%26special/update-basic-config',
+                sampleBody,
+                undefined
+            );
+        });
+
+        it('should pass custom headers', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: {} };
+            vi.mocked(mockRequest.patch).mockResolvedValue(mockResponse);
+            const headers = { 'X-Custom': 'v' };
+            await networkOps.updateSsidBasicConfig('wlan-1', 'ssid-1', sampleBody, 'site-123', headers);
+            expect(mockRequest.patch).toHaveBeenCalledWith(expect.any(String), sampleBody, headers);
+        });
+
+        it('should use default site if siteId not provided', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: {} };
+            vi.mocked(mockRequest.patch).mockResolvedValue(mockResponse);
+            await networkOps.updateSsidBasicConfig('wlan-1', 'ssid-1', sampleBody);
+            expect(mockSite.resolveSiteId).toHaveBeenCalledWith(undefined);
+            expect(mockRequest.patch).toHaveBeenCalledWith(
+                '/openapi/v1/test-omadac/sites/default-site/wireless-network/wlans/wlan-1/ssids/ssid-1/update-basic-config',
+                sampleBody,
+                undefined
+            );
+        });
+
+        it('should propagate API errors', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = {
+                errorCode: -33807,
+                msg: 'Invalid VLAN ID. Enter a number from 1 to 4094.',
+                result: null,
+            };
+            vi.mocked(mockRequest.patch).mockResolvedValue(mockResponse);
+
+            await expect(networkOps.updateSsidBasicConfig('wlan-1', 'ssid-1', sampleBody, 'site-123')).rejects.toThrow('Invalid VLAN ID');
+        });
+    });
+
     describe('listPoeSchedules', () => {
         it('should list PoE schedules', async () => {
             const mockData = [{ id: 'poe-1', name: 'PoE Schedule 1' }];

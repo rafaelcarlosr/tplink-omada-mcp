@@ -303,6 +303,7 @@ In client-credentials mode the server already treats `Mcp-Session-Id` as optiona
 | `getWlanGroupList` | Gets the list of WLAN groups configured in a site. |
 | `getSsidList` | Gets the list of SSIDs in a WLAN group. |
 | `getSsidDetail` | Gets detailed information for a specific SSID. Required: `wlanId` and `ssidId`. |
+| `updateSsidBasicConfig` | Updates an SSID's basic config (name, band, security, VLAN, broadcast, MLO, PMF). PATCH on sub-resource. |
 | `listAllSsids` | Lists wireless SSIDs across all WLAN groups. |
 | `getFirewallSetting` | Gets firewall configuration and rules for a site. |
 | `getVpnSettings` | Gets VPN settings for a site. |
@@ -669,6 +670,7 @@ In client-credentials mode the server already treats `Mcp-Session-Id` as optiona
 | `getSpeedTestResults` | Get the last speed test results for an access point. | `getSpeedTestResults` |
 | `getSshSetting` | Get SSH access settings for a site. | `getSshSetting` |
 | `getSsidDetail` | Get detailed information for a specific SSID (wireless network), in.... | `getSsidDetail` |
+| `updateSsidBasicConfig` | Update an SSID's basic config (name, band 1/2/4 bitmask, security 0/2/3/4/5, vlanEnable+vlanId, broadcast, mloEnable, pmfMode 1/2/3, 11r, oweEnable). Security-conditional sub-objects: pskSetting/entSetting/ppskSetting. | `updateSsidBasicConfig` |
 | `getSsidList` | Get the list of SSIDs (wireless networks) configured in a WLAN group. | `getSsidList` |
 | `getStackNetworkList` | Get the VLAN network list for a switch stack. | `getStackNetworkList` |
 | `getStackPorts` | Get all port information for a switch stack. | `getStackPorts` |

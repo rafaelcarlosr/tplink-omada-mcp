@@ -634,6 +634,35 @@ export class NetworkOperations {
     }
 
     /**
+     * Update an SSID's basic config (name, band, security, VLAN, broadcast, MLO, PMF, etc.).
+     * OperationId: updateSsidBasicConfig
+     *
+     * @param wlanId - WLAN group ID (from getWlanGroupList).
+     * @param ssidId - SSID ID (from getSsidList).
+     * @param body - Body conforming to UpdateSsidBasicConfigOpenApiVO. Required:
+     *   name, band (bitmask: 1=2.4G, 2=5G, 4=6G; e.g. 7=all bands), broadcast,
+     *   enable11r, guestNetEnable, mloEnable, pmfMode (1=Mandatory, 2=Capable,
+     *   3=Disable), security (0=None, 2=WPA-Enterprise, 3=WPA-Personal,
+     *   4=PPSK without RADIUS, 5=PPSK with RADIUS), vlanEnable.
+     *   Conditional sub-objects: pskSetting (security=3), entSetting (security=2),
+     *   ppskSetting (security=4/5), vlanSetting/vlanId (vlanEnable=true).
+     */
+    public async updateSsidBasicConfig(
+        wlanId: string,
+        ssidId: string,
+        body: unknown,
+        siteId?: string,
+        customHeaders?: CustomHeaders
+    ): Promise<unknown> {
+        const resolvedSiteId = this.site.resolveSiteId(siteId);
+        const path = this.buildPath(
+            `/sites/${encodeURIComponent(resolvedSiteId)}/wireless-network/wlans/${encodeURIComponent(wlanId)}/ssids/${encodeURIComponent(ssidId)}/update-basic-config`
+        );
+        const response = await this.request.patch<OmadaApiResponse<unknown>>(path, body, customHeaders);
+        return this.request.ensureSuccess(response);
+    }
+
+    /**
      * List PoE schedules.
      * OperationId: getPoeScheduleList
      */

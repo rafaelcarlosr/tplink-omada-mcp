@@ -870,6 +870,16 @@ export class OmadaClient {
         return await this.networkOps.deletePortSchedule(portScheduleId, siteId, customHeaders);
     }
 
+    public async updateSsidBasicConfig(
+        wlanId: string,
+        ssidId: string,
+        body: unknown,
+        siteId?: string,
+        customHeaders?: CustomHeaders
+    ): Promise<unknown> {
+        return await this.networkOps.updateSsidBasicConfig(wlanId, ssidId, body, siteId, customHeaders);
+    }
+
     public async listPoeSchedules(siteId?: string, customHeaders?: CustomHeaders): Promise<unknown[]> {
         return await this.networkOps.listPoeSchedules(siteId, customHeaders);
     }

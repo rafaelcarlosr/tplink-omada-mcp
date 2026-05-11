@@ -350,6 +350,7 @@ import { registerSetClientRateLimitProfileTool } from './setClientRateLimitProfi
 import { registerUpdateClientNameTool } from './updateClientName.js';
 import { registerUpdateDhcpReservationTool } from './updateDhcpReservation.js';
 import { registerUpdateGroupProfileTool } from './updateGroupProfile.js';
+import { registerUpdateSsidBasicConfigTool } from './updateSsidBasicConfig.js';
 
 // ---------------------------------------------------------------------------
 // Tool registry: each entry maps a register-function to its category and
@@ -559,6 +560,7 @@ const TOOL_REGISTRY: ToolEntry[] = [
     { fn: registerGetSsidDetailTool, category: 'wireless-ssid', permission: 'read' },
     { fn: registerListAllSsidsTool, category: 'wireless-ssid', permission: 'read' },
     { fn: registerGetSsidsBySiteTool, category: 'wireless-ssid', permission: 'read' },
+    { fn: registerUpdateSsidBasicConfigTool, category: 'wireless-ssid', permission: 'write' },
 
     // --- Wireless radio ---
     { fn: registerGetRadioFrequencyPlanningConfigTool, category: 'wireless-radio', permission: 'read' },
