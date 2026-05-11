@@ -273,13 +273,13 @@ describe('registerAllTools category filtering', () => {
         registerAllTools(mockServer, mockClient, activeCategories);
 
         expect((mockServer.registerTool as ReturnType<typeof vi.fn>).mock.calls.length).toBeGreaterThan(0);
-        // dashboard read tools are a subset of all 332 tools
-        expect((mockServer.registerTool as ReturnType<typeof vi.fn>).mock.calls.length).toBeLessThan(332);
+        // dashboard read tools are a subset of all 333 tools
+        expect((mockServer.registerTool as ReturnType<typeof vi.fn>).mock.calls.length).toBeLessThan(333);
     });
 
-    it('registers all 332 tools when no activeCategories provided', () => {
+    it('registers all 333 tools when no activeCategories provided', () => {
         registerAllTools(mockServer, mockClient);
-        expect(mockServer.registerTool).toHaveBeenCalledTimes(332);
+        expect(mockServer.registerTool).toHaveBeenCalledTimes(333);
     });
 
     it('registers zero tools when active categories map is empty', () => {
@@ -290,15 +290,15 @@ describe('registerAllTools category filtering', () => {
     it('registers all tools when all:rw is active', () => {
         const { categories: activeCategories } = parseToolCategories('all:rw');
         registerAllTools(mockServer, mockClient, activeCategories);
-        expect(mockServer.registerTool).toHaveBeenCalledTimes(332);
+        expect(mockServer.registerTool).toHaveBeenCalledTimes(333);
     });
 
     it('write-only filter registers only write tools for clients category', () => {
         // clients:w should only register write tools:
-        // setClientRateLimit, setClientRateLimitProfile, disableClientRateLimit
+        // setClientRateLimit, setClientRateLimitProfile, disableClientRateLimit, updateClientName
         const { categories: activeCategories } = parseToolCategories('clients:w');
         registerAllTools(mockServer, mockClient, activeCategories);
-        expect((mockServer.registerTool as ReturnType<typeof vi.fn>).mock.calls.length).toBe(3);
+        expect((mockServer.registerTool as ReturnType<typeof vi.fn>).mock.calls.length).toBe(4);
     });
 
     it('logs active categories and tool count on startup', () => {

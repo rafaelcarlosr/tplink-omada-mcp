@@ -200,6 +200,7 @@ In client-credentials mode the server already treats `Mcp-Session-Id` as optiona
 | `listClientsPastConnections` | Gets past connection history for clients.                                    |
 | `setClientRateLimit` | Sets custom bandwidth limits for a specific client. |
 | `setClientRateLimitProfile` | Applies a predefined rate limit profile to a specific client. |
+| `updateClientName` | Renames a client (sets display name) by MAC address. Replaces the failed `updateClient` 405 path (UI-required) with the supported Open API endpoint. |
 | `disableClientRateLimit` | Disables bandwidth rate limiting for a specific client. |
 ### Device
 
@@ -682,6 +683,7 @@ In client-credentials mode the server already treats `Mcp-Session-Id` as optiona
 | `searchDevices` | Search for devices globally across all sites the user has access to. | `searchDevices` |
 | `setClientRateLimit` | Set custom rate limit (bandwidth control) for a specific client. | `setClientRateLimit` |
 | `setClientRateLimitProfile` | Apply a predefined rate limit profile to a specific client. | `setClientRateLimitProfile` |
+| `updateClientName` | Rename a client (set display name) by MAC address. Replaces the failed `updateClient` 405 path (UI-required). | `updateClientName` |
 | `getAclConfigTypeSetting` | Get the ACL configuration type setting for the site gateway (L2 or .... | `getAclConfigTypeSetting` |
 | `getAttackDefenseSetting` | Get the DDoS and attack defense configuration, including flood prot.... | `getAttackDefenseSetting` |
 | `getAuditLogSettingForGlobal` | Get global audit log notification settings for the controller. | `getAuditLogSettingForGlobal` |

@@ -672,6 +672,80 @@ describe('omadaClient/client', () => {
         });
     });
 
+    describe('updateClientName', () => {
+        it('should PATCH client name with body and resolved site', async () => {
+            const mockData = { success: true };
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: mockData };
+            (mockRequest.patch as ReturnType<typeof vi.fn>).mockResolvedValue(mockResponse);
+            (mockRequest.ensureSuccess as ReturnType<typeof vi.fn>).mockReturnValue(mockData);
+
+            const result = await clientOps.updateClientName('AA:BB:CC:DD:EE:FF', { name: 'Living Room TV' }, 'test-site');
+
+            expect(mockSite.resolveSiteId).toHaveBeenCalledWith('test-site');
+            expect(mockRequest.patch).toHaveBeenCalledWith(
+                '/api/sites/test-site/clients/AA%3ABB%3ACC%3ADD%3AEE%3AFF/name',
+                { name: 'Living Room TV' },
+                undefined
+            );
+            expect(mockRequest.ensureSuccess).toHaveBeenCalledWith(mockResponse);
+            expect(result).toEqual(mockData);
+        });
+
+        it('should URL-encode special characters in clientMac', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: {} };
+            (mockRequest.patch as ReturnType<typeof vi.fn>).mockResolvedValue(mockResponse);
+            (mockRequest.ensureSuccess as ReturnType<typeof vi.fn>).mockReturnValue({});
+
+            await clientOps.updateClientName('AA:BB:CC/DD:EE FF', { name: 'My Phone' }, 'site/with space');
+
+            expect(mockRequest.patch).toHaveBeenCalledWith(
+                '/api/sites/site%2Fwith%20space/clients/AA%3ABB%3ACC%2FDD%3AEE%20FF/name',
+                { name: 'My Phone' },
+                undefined
+            );
+        });
+
+        it('should pass customHeaders to patch request', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: {} };
+            const customHeaders = { 'X-Custom': 'value' };
+            (mockRequest.patch as ReturnType<typeof vi.fn>).mockResolvedValue(mockResponse);
+            (mockRequest.ensureSuccess as ReturnType<typeof vi.fn>).mockReturnValue({});
+
+            await clientOps.updateClientName('AA:BB:CC:DD:EE:FF', { name: 'My Laptop' }, 'test-site', customHeaders);
+
+            expect(mockRequest.patch).toHaveBeenCalledWith(
+                '/api/sites/test-site/clients/AA%3ABB%3ACC%3ADD%3AEE%3AFF/name',
+                { name: 'My Laptop' },
+                customHeaders
+            );
+        });
+
+        it('should use default siteId if not provided', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: {} };
+            (mockRequest.patch as ReturnType<typeof vi.fn>).mockResolvedValue(mockResponse);
+            (mockRequest.ensureSuccess as ReturnType<typeof vi.fn>).mockReturnValue({});
+
+            await clientOps.updateClientName('AA:BB:CC:DD:EE:FF', { name: 'Renamed' });
+
+            expect(mockSite.resolveSiteId).toHaveBeenCalledWith(undefined);
+            expect(mockRequest.patch).toHaveBeenCalledWith(
+                '/api/sites/default-site/clients/AA%3ABB%3ACC%3ADD%3AEE%3AFF/name',
+                { name: 'Renamed' },
+                undefined
+            );
+        });
+
+        it('should propagate API errors via ensureSuccess', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: -41011, msg: 'This client does not exist.' };
+            (mockRequest.patch as ReturnType<typeof vi.fn>).mockResolvedValue(mockResponse);
+            (mockRequest.ensureSuccess as ReturnType<typeof vi.fn>).mockImplementation(() => {
+                throw new Error('This client does not exist.');
+            });
+
+            await expect(clientOps.updateClientName('AA:BB:CC:DD:EE:FF', { name: 'X' }, 'test-site')).rejects.toThrow('This client does not exist.');
+        });
+    });
+
     describe('getGridKnownClients', () => {
         it('should return paginated known clients', async () => {
             const mockData = { data: [], totalRows: 0 };

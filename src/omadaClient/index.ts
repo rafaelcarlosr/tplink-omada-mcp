@@ -196,6 +196,10 @@ export class OmadaClient {
         return await this.clientOps.getClientDetail(clientMac, siteId, customHeaders);
     }
 
+    public async updateClientName(clientMac: string, body: { name: string }, siteId?: string, customHeaders?: CustomHeaders): Promise<unknown> {
+        return await this.clientOps.updateClientName(clientMac, body, siteId, customHeaders);
+    }
+
     public async getGridKnownClients(
         page: number,
         pageSize: number,

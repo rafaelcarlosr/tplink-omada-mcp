@@ -263,6 +263,18 @@ export class ClientOperations {
     }
 
     /**
+     * Set the display name for a client (PATCH).
+     * OperationId: updateClientName
+     * Required body field: `name` (1-128 chars, no leading/trailing spaces or `+ - @ =`).
+     */
+    public async updateClientName(clientMac: string, body: { name: string }, siteId?: string, customHeaders?: CustomHeaders): Promise<unknown> {
+        const resolvedSiteId = this.site.resolveSiteId(siteId);
+        const path = this.buildPath(`/sites/${encodeURIComponent(resolvedSiteId)}/clients/${encodeURIComponent(clientMac)}/name`);
+        const response = await this.request.patch<OmadaApiResponse<unknown>>(path, body, customHeaders);
+        return this.request.ensureSuccess(response);
+    }
+
+    /**
      * Get historical known clients list (paginated).
      * OperationId: getGridKnownClients
      */

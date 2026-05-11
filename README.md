@@ -386,6 +386,7 @@ In client-credentials mode the server already treats `Mcp-Session-Id` as optiona
 | `setClientRateLimit` | Sets custom bandwidth limits (download/upload) for a specific client. |
 | `setClientRateLimitProfile` | Applies a predefined rate limit profile to a specific client.                |
 | `disableClientRateLimit` | Disables bandwidth rate limiting for a specific client. |
+| `updateClientName` | Renames a client (sets display name) by MAC address. Replaces the failed `updateClient` 405 path (UI-required) with the supported Open API endpoint. |
 ### Device
 
 | Tool                    | Description                                                                       |
@@ -947,6 +948,7 @@ In client-credentials mode the server already treats `Mcp-Session-Id` as optiona
 | `getDashboardTrafficActivities` | Get traffic activity data and throughput summary from the site dashboard. | `getDashboardTrafficActivities` |
 | `getGridDashboardTunnelStats` | Get VPN tunnel statistics for the grid dashboard view. | `getGridDashboardTunnelStats` |
 | `setClientRateLimitProfile` | Apply a predefined rate limit profile to a specific client. | `setClientRateLimitProfile` |
+| `updateClientName` | Rename a client (set display name) by MAC address. Replaces the failed `updateClient` 405 path (UI-required). | `updateClientName` |
 | `getGatewayQosClassRules` | Get gateway QoS class rules (paginated). | `getGatewayQosClassRules` |
 | `getBandwidthCtrlDetail` | Get bandwidth control details for a site. | `getBandwidthCtrlDetail` |
 | `getAppControlRules` | Get application control rules (paginated). | `getAppControlRules` |

@@ -333,6 +333,7 @@ import { registerListWireguardPeersTool } from './listWireguardPeers.js';
 import { registerSearchDevicesTool } from './searchDevices.js';
 import { registerSetClientRateLimitTool } from './setClientRateLimit.js';
 import { registerSetClientRateLimitProfileTool } from './setClientRateLimitProfile.js';
+import { registerUpdateClientNameTool } from './updateClientName.js';
 import { registerUpdateDhcpReservationTool } from './updateDhcpReservation.js';
 import { registerUpdateGroupProfileTool } from './updateGroupProfile.js';
 
@@ -438,6 +439,7 @@ const TOOL_REGISTRY: ToolEntry[] = [
     { fn: registerSetClientRateLimitTool, category: 'clients', permission: 'write' },
     { fn: registerSetClientRateLimitProfileTool, category: 'clients', permission: 'write' },
     { fn: registerDisableClientRateLimitTool, category: 'clients', permission: 'write' },
+    { fn: registerUpdateClientNameTool, category: 'clients', permission: 'write' },
 
     // --- Client insights ---
     { fn: registerListMostActiveClientsTool, category: 'client-insights', permission: 'read' },
