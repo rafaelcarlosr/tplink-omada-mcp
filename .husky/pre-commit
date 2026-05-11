@@ -1,15 +1,10 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 # Verify AI instruction symlinks are intact before committing.
 # These symlinks point all AI agents (Codex, Copilot, Claude Code) to CLAUDE.md.
+# POSIX sh — husky invokes hooks via `sh -e`, so no bash-only syntax.
 
 FAIL=0
-LINKS=(
-  "AGENTS.md"
-  ".github/copilot-instructions.md"
-  ".github/AGENTS.md"
-)
-
-for link in "${LINKS[@]}"; do
+for link in "AGENTS.md" ".github/copilot-instructions.md" ".github/AGENTS.md"; do
   if [ ! -L "$link" ]; then
     echo "❌ pre-commit: $link is missing or not a symlink"
     FAIL=1
