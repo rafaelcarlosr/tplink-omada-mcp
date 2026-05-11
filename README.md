@@ -497,6 +497,7 @@ In client-credentials mode the server already treats `Mcp-Session-Id` as optiona
 | `listEapAcls` | Lists access point (EAP) ACL rules. |
 | `deleteAcl` | Deletes an ACL rule by `aclId`. Same endpoint covers gateway (OSG), EAP, and switch (OSW) ACLs. |
 | `modifyOsgAcl` | Modifies a gateway (OSG) ACL rule by `aclId`. PUT full-replacement semantics — supply the complete rule body. |
+| `modifyEapAcl` | Modifies an EAP (access point) ACL rule by `aclId`. PUT full-replacement; simpler body than gateway (no direction/state/syslog). |
 | `listStaticRoutes` | [DEPRECATED] Use `getGridStaticRouting` instead. This tool aggregates all pages; getGridStaticRouting returns a single paginated page. |
 | `getStaticRoutingInterfaceList` | Gets available interfaces for static routing.                             |
 | `listPolicyRoutes` | [DEPRECATED] Use `getGridPolicyRouting` instead. This tool aggregates all pages; getGridPolicyRouting is paginated. |
@@ -772,6 +773,7 @@ In client-credentials mode the server already treats `Mcp-Session-Id` as optiona
 | `deleteDhcpReservation` | Delete an existing DHCP reservation by MAC. | `deleteDhcpReservation` |
 | `deleteAcl` | Delete an ACL rule by `aclId`. The same endpoint covers gateway (OSG), EAP, and switch (OSW) ACLs — pass the id from the matching list call. | `deleteAcl` |
 | `modifyOsgAcl` | Modify a gateway (OSG) ACL rule by `aclId` (PUT, full-replacement). Required: description, status, policy, protocols, sourceType, sourceIds, destinationType, direction, stateMode, syslog. | `modifyOsgAcl` |
+| `modifyEapAcl` | Modify an EAP (access point) ACL rule by `aclId` (PUT, full-replacement). Required: description, status, policy, protocols, sourceType, sourceIds, destinationType. | `modifyEapAcl` |
 | `getDnsCacheSetting` | Get DNS cache setting for the site gateway. | `getDnsCacheSetting` |
 | `getDnsProxy` | Get DNS proxy configuration for the site gateway. | `getDnsProxy` |
 | `getFirewallSetting` | Get firewall configuration and rules for a site, including ACL rule.... | `getFirewallSetting` |

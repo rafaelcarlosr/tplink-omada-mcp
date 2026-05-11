@@ -298,6 +298,21 @@ export class NetworkOperations {
     }
 
     /**
+     * Modify an EAP (access point) ACL rule.
+     * OperationId: modifyEapAcl
+     *
+     * @param aclId - ACL rule ID (returned by listEapAcls).
+     * @param body - Updated rule body conforming to EapACLConfig. Required:
+     *   description, destinationType, policy, protocols, sourceIds, sourceType, status.
+     */
+    public async modifyEapAcl(aclId: string, body: unknown, siteId?: string, customHeaders?: CustomHeaders): Promise<unknown> {
+        const resolvedSiteId = this.site.resolveSiteId(siteId);
+        const path = this.buildPath(`/sites/${encodeURIComponent(resolvedSiteId)}/acls/eap-acls/${encodeURIComponent(aclId)}`);
+        const response = await this.request.put<OmadaApiResponse<unknown>>(path, body, customHeaders);
+        return this.request.ensureSuccess(response);
+    }
+
+    /**
      * List static routing rules.
      * OperationId: getStaticRoutingList
      */
