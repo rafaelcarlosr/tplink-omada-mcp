@@ -17,6 +17,7 @@
         "test:watch": "vitest",
         "test:coverage": "vitest run --coverage",
         "dev": "tsx src/index.ts",
+        "smoke-test": "tsx scripts/smoke-test.ts",
         "start": "node dist/index.js",
         "inspector": "tsx scripts/run-inspector.ts",
         "inspector:build": "npm run build && tsx scripts/run-inspector.ts build",
