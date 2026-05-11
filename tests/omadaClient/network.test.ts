@@ -2114,4 +2114,49 @@ describe('NetworkOperations', () => {
             await expect(networkOps.deleteLanProfile('profile-missing', 'site-123')).rejects.toThrow('This profile does not exist.');
         });
     });
+
+    describe('deleteLanNetwork', () => {
+        it('should DELETE a LAN network by network ID', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: {} };
+            vi.mocked(mockRequest.delete).mockResolvedValue(mockResponse);
+
+            const result = await networkOps.deleteLanNetwork('net-abc', 'site-123');
+
+            expect(mockSite.resolveSiteId).toHaveBeenCalledWith('site-123');
+            expect(mockRequest.delete).toHaveBeenCalledWith('/openapi/v1/test-omadac/sites/site-123/lan-networks/net-abc', undefined);
+            expect(result).toEqual({});
+        });
+
+        it('should pass custom headers', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: {} };
+            vi.mocked(mockRequest.delete).mockResolvedValue(mockResponse);
+            const headers = { 'X-Custom': 'v' };
+            await networkOps.deleteLanNetwork('net-abc', 'site-123', headers);
+            expect(mockRequest.delete).toHaveBeenCalledWith(expect.any(String), headers);
+        });
+
+        it('should use default site if siteId not provided', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: {} };
+            vi.mocked(mockRequest.delete).mockResolvedValue(mockResponse);
+
+            await networkOps.deleteLanNetwork('net-abc');
+
+            expect(mockSite.resolveSiteId).toHaveBeenCalledWith(undefined);
+            expect(mockRequest.delete).toHaveBeenCalledWith('/openapi/v1/test-omadac/sites/default-site/lan-networks/net-abc', undefined);
+        });
+
+        it('should URL-encode special chars in networkId path segment', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: {} };
+            vi.mocked(mockRequest.delete).mockResolvedValue(mockResponse);
+            await networkOps.deleteLanNetwork('net/with spaces&!', 'site-123');
+            expect(mockRequest.delete).toHaveBeenCalledWith('/openapi/v1/test-omadac/sites/site-123/lan-networks/net%2Fwith%20spaces%26!', undefined);
+        });
+
+        it('should propagate API errors via ensureSuccess', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: -33505, msg: 'Default LAN cannot be deleted.', result: null };
+            vi.mocked(mockRequest.delete).mockResolvedValue(mockResponse);
+
+            await expect(networkOps.deleteLanNetwork('default-lan', 'site-123')).rejects.toThrow('Default LAN cannot be deleted.');
+        });
+    });
 });

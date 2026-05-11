@@ -148,8 +148,8 @@ describe('tools/index', () => {
             expect(mockServer.registerTool).toHaveBeenCalledWith('getSitesHealthGatewaysWansDetails', expect.any(Object), expect.any(Function));
 
             // Verify total number of tools registered
-            // 327 baseline + 3 group profile CRUD + 2 DHCP reservation write ops + 1 updateClientName + 1 deleteLanProfile
-            expect(mockServer.registerTool).toHaveBeenCalledTimes(334);
+            // 327 baseline + 3 group profile CRUD + 2 DHCP reservation write ops + 1 updateClientName + 1 deleteLanProfile + 1 deleteLanNetwork
+            expect(mockServer.registerTool).toHaveBeenCalledTimes(335);
         });
     });
 });

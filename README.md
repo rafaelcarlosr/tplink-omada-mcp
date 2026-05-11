@@ -481,6 +481,7 @@ In client-credentials mode the server already treats `Mcp-Session-Id` as optiona
 | `getInterfaceLanNetworkV2` | Get interface-level LAN network bindings (v2 API). Returns richer per-interface VLAN and network data. |
 | `getLanProfileList` | Gets the list of LAN profiles configured in a site. |
 | `deleteLanProfile` | Deletes a LAN profile by `profileId`. Cannot delete a profile assigned to an Easy Managed Switch. |
+| `deleteLanNetwork` | Deletes a LAN network by `networkId`. Default LAN, switch-native networks, and IDS/IPS-referenced networks cannot be deleted. |
 | `getApLoadBalance` | [DEPRECATED] Use `getSitesApsLoadBalance` instead. Same endpoint, retained for backward compatibility. getSitesApsLoadBalance is the canonical tool name. |
 | `getApOfdmaConfig` | [DEPRECATED] Use `getSitesApsOfdma` instead. Same endpoint, retained for backward compatibility. getSitesApsOfdma is the canonical tool name. |
 | `getMulticastRateLimit` | Get multicast rate limit settings for a site. |
@@ -796,6 +797,7 @@ In client-credentials mode the server already treats `Mcp-Session-Id` as optiona
 | `getLanProfileEsUsage` | Get EAP/switch device usage for a specific LAN profile. Requires `profileId`. | `getLanProfileEsUsage` |
 | `getLanProfileList` | Get the list of LAN profiles configured in a site. | `getLanProfileList` |
 | `deleteLanProfile` | Delete an existing LAN profile by `profileId`. Cannot delete a profile assigned to an Easy Managed Switch. | `deleteLanProfile` |
+| `deleteLanNetwork` | Delete an existing LAN network by `networkId`. Default LAN, switch-native networks, and IDS/IPS-referenced networks cannot be deleted. | `deleteLanNetwork` |
 | `getLtePortConfig` | Get LTE/cellular WAN port configuration for the site gateway. | `getLtePortConfig` |
 | `getLldpSetting` | Get LLDP (Link Layer Discovery Protocol) global setting for the site. | `getLldpSetting` |
 | `getMeshStatistics` | Get mesh link statistics for an access point. | `getMeshStatistics` |

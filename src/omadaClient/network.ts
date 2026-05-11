@@ -95,6 +95,25 @@ export class NetworkOperations {
     }
 
     /**
+     * Delete an existing LAN network by network ID.
+     * OperationId: deleteLanNetwork
+     *
+     * @param networkId - LAN network ID (see getLanNetworkList / getLanNetworkListV2).
+     *
+     * Documented error codes:
+     *   -33503: This network does not exist.
+     *   -33505: Default LAN cannot be deleted.
+     *   -33566: Network is configured as a switch's native network; cannot delete.
+     *   -35200: LAN network referenced by IDS/IPS-Allow List cannot be deleted.
+     */
+    public async deleteLanNetwork(networkId: string, siteId?: string, customHeaders?: CustomHeaders): Promise<unknown> {
+        const resolvedSiteId = this.site.resolveSiteId(siteId);
+        const path = this.buildPath(`/sites/${encodeURIComponent(resolvedSiteId)}/lan-networks/${encodeURIComponent(networkId)}`);
+        const response = await this.request.delete<OmadaApiResponse<unknown>>(path, customHeaders);
+        return this.request.ensureSuccess(response);
+    }
+
+    /**
      * Get WLAN group list.
      * OperationId: getWlanGroupList
      */
