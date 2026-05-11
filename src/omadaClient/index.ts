@@ -257,6 +257,10 @@ export class OmadaClient {
         return await this.networkOps.getLanProfileList(siteId, customHeaders);
     }
 
+    public async deleteLanProfile(profileId: string, siteId?: string, customHeaders?: CustomHeaders): Promise<unknown> {
+        return await this.networkOps.deleteLanProfile(profileId, siteId, customHeaders);
+    }
+
     public async getWlanGroupList(siteId?: string, customHeaders?: CustomHeaders): Promise<unknown[]> {
         return await this.networkOps.getWlanGroupList(siteId, customHeaders);
     }

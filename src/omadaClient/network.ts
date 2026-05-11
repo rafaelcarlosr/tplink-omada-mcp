@@ -77,6 +77,24 @@ export class NetworkOperations {
     }
 
     /**
+     * Delete an existing LAN profile by profile ID.
+     * OperationId: deleteLanProfile
+     *
+     * @param profileId - LAN profile ID (see getLanProfileList).
+     *
+     * Documented error codes:
+     *   -33004: Operation failed; another site operation in progress.
+     *   -33507: This profile does not exist.
+     *   -33560: Easy Managed Switch is configured with this profile and the profile cannot be deleted.
+     */
+    public async deleteLanProfile(profileId: string, siteId?: string, customHeaders?: CustomHeaders): Promise<unknown> {
+        const resolvedSiteId = this.site.resolveSiteId(siteId);
+        const path = this.buildPath(`/sites/${encodeURIComponent(resolvedSiteId)}/lan-profiles/${encodeURIComponent(profileId)}`);
+        const response = await this.request.delete<OmadaApiResponse<unknown>>(path, customHeaders);
+        return this.request.ensureSuccess(response);
+    }
+
+    /**
      * Get WLAN group list.
      * OperationId: getWlanGroupList
      */

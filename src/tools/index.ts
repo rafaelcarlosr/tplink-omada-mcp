@@ -6,6 +6,7 @@ import { logger } from '../utils/logger.js';
 import { registerCreateGroupProfileTool } from './createGroupProfile.js';
 import { registerDeleteDhcpReservationTool } from './deleteDhcpReservation.js';
 import { registerDeleteGroupProfileTool } from './deleteGroupProfile.js';
+import { registerDeleteLanProfileTool } from './deleteLanProfile.js';
 import { registerDisableClientRateLimitTool } from './disableClientRateLimit.js';
 import { registerGetAccessControlTool } from './getAccessControl.js';
 import { registerGetAclConfigTypeSettingTool } from './getAclConfigTypeSetting.js';
@@ -495,6 +496,7 @@ const TOOL_REGISTRY: ToolEntry[] = [
     { fn: registerGetSwitchVlanInterfaceTool, category: 'network-lan', permission: 'read' },
     { fn: registerGetLanDnsRulesTool, category: 'network-lan', permission: 'read' },
     { fn: registerGetLanProfileEsUsageTool, category: 'network-lan', permission: 'read' },
+    { fn: registerDeleteLanProfileTool, category: 'network-lan', permission: 'write' },
     { fn: registerGetLanClientCountTool, category: 'network-lan', permission: 'read' },
 
     // --- Network NAT ---

@@ -2066,4 +2066,52 @@ describe('NetworkOperations', () => {
             await expect(networkOps.deleteDhcpReservation('AA-BB-CC-11-22-33', 'missing-site')).rejects.toThrow('This site does not exist.');
         });
     });
+
+    describe('deleteLanProfile', () => {
+        it('should DELETE a LAN profile by profile ID', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: {} };
+            vi.mocked(mockRequest.delete).mockResolvedValue(mockResponse);
+
+            const result = await networkOps.deleteLanProfile('profile-abc', 'site-123');
+
+            expect(mockSite.resolveSiteId).toHaveBeenCalledWith('site-123');
+            expect(mockRequest.delete).toHaveBeenCalledWith('/openapi/v1/test-omadac/sites/site-123/lan-profiles/profile-abc', undefined);
+            expect(result).toEqual({});
+        });
+
+        it('should pass custom headers', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: {} };
+            vi.mocked(mockRequest.delete).mockResolvedValue(mockResponse);
+            const headers = { 'X-Custom': 'v' };
+            await networkOps.deleteLanProfile('profile-abc', 'site-123', headers);
+            expect(mockRequest.delete).toHaveBeenCalledWith(expect.any(String), headers);
+        });
+
+        it('should use default site if siteId not provided', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: {} };
+            vi.mocked(mockRequest.delete).mockResolvedValue(mockResponse);
+
+            await networkOps.deleteLanProfile('profile-abc');
+
+            expect(mockSite.resolveSiteId).toHaveBeenCalledWith(undefined);
+            expect(mockRequest.delete).toHaveBeenCalledWith('/openapi/v1/test-omadac/sites/default-site/lan-profiles/profile-abc', undefined);
+        });
+
+        it('should URL-encode special chars in profileId path segment', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: {} };
+            vi.mocked(mockRequest.delete).mockResolvedValue(mockResponse);
+            await networkOps.deleteLanProfile('profile/with spaces&!', 'site-123');
+            expect(mockRequest.delete).toHaveBeenCalledWith(
+                '/openapi/v1/test-omadac/sites/site-123/lan-profiles/profile%2Fwith%20spaces%26!',
+                undefined
+            );
+        });
+
+        it('should propagate API errors via ensureSuccess', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: -33507, msg: 'This profile does not exist.', result: null };
+            vi.mocked(mockRequest.delete).mockResolvedValue(mockResponse);
+
+            await expect(networkOps.deleteLanProfile('profile-missing', 'site-123')).rejects.toThrow('This profile does not exist.');
+        });
+    });
 });
