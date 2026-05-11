@@ -4,6 +4,7 @@ import type { ToolCategory, ToolPermission } from '../config.js';
 import type { OmadaClient } from '../omadaClient/index.js';
 import { logger } from '../utils/logger.js';
 import { registerCreateGroupProfileTool } from './createGroupProfile.js';
+import { registerDeleteDhcpReservationTool } from './deleteDhcpReservation.js';
 import { registerDeleteGroupProfileTool } from './deleteGroupProfile.js';
 import { registerDisableClientRateLimitTool } from './disableClientRateLimit.js';
 import { registerGetAccessControlTool } from './getAccessControl.js';
@@ -332,6 +333,7 @@ import { registerListWireguardPeersTool } from './listWireguardPeers.js';
 import { registerSearchDevicesTool } from './searchDevices.js';
 import { registerSetClientRateLimitTool } from './setClientRateLimit.js';
 import { registerSetClientRateLimitProfileTool } from './setClientRateLimitProfile.js';
+import { registerUpdateDhcpReservationTool } from './updateDhcpReservation.js';
 import { registerUpdateGroupProfileTool } from './updateGroupProfile.js';
 
 // ---------------------------------------------------------------------------
@@ -481,6 +483,8 @@ const TOOL_REGISTRY: ToolEntry[] = [
     { fn: registerGetInterfaceLanNetworkTool, category: 'network-lan', permission: 'read' },
     { fn: registerGetInterfaceLanNetworkV2Tool, category: 'network-lan', permission: 'read' },
     { fn: registerGetDhcpReservationGridTool, category: 'network-lan', permission: 'read' },
+    { fn: registerUpdateDhcpReservationTool, category: 'network-lan', permission: 'write' },
+    { fn: registerDeleteDhcpReservationTool, category: 'network-lan', permission: 'write' },
     { fn: registerGetIpMacBindingGeneralSettingTool, category: 'network-lan', permission: 'read' },
     { fn: registerGetGridIpMacBindingTool, category: 'network-lan', permission: 'read' },
     { fn: registerGetDnsCacheSettingTool, category: 'network-lan', permission: 'read' },

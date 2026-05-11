@@ -1949,4 +1949,121 @@ describe('NetworkOperations', () => {
             await expect(networkOps.deleteGroupProfile('0', 'nonexistent', 'site-123')).rejects.toThrow('Group profile not found');
         });
     });
+
+    describe('updateDhcpReservation', () => {
+        it('should PATCH an existing DHCP reservation by MAC', async () => {
+            const body = { netId: 'net-1', mac: 'AA-BB-CC-11-22-33', status: true, ip: '192.168.1.50', description: 'NAS' };
+            const mockResult = { id: 'res-1', ...body };
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: mockResult };
+            vi.mocked(mockRequest.patch).mockResolvedValue(mockResponse);
+
+            const result = await networkOps.updateDhcpReservation('AA-BB-CC-11-22-33', body, 'site-123');
+
+            expect(mockSite.resolveSiteId).toHaveBeenCalledWith('site-123');
+            expect(mockRequest.patch).toHaveBeenCalledWith(
+                '/openapi/v1/test-omadac/sites/site-123/setting/service/dhcp/AA-BB-CC-11-22-33',
+                body,
+                undefined
+            );
+            expect(result).toEqual(mockResult);
+        });
+
+        it('should URL-encode special chars in mac path segment', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: {} };
+            vi.mocked(mockRequest.patch).mockResolvedValue(mockResponse);
+
+            await networkOps.updateDhcpReservation('AA:BB:CC:11:22:33', { netId: 'net-1', mac: 'AA:BB:CC:11:22:33', status: true }, 'site-123');
+
+            expect(mockRequest.patch).toHaveBeenCalledWith(
+                '/openapi/v1/test-omadac/sites/site-123/setting/service/dhcp/AA%3ABB%3ACC%3A11%3A22%3A33',
+                expect.any(Object),
+                undefined
+            );
+        });
+
+        it('should pass custom headers', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: {} };
+            vi.mocked(mockRequest.patch).mockResolvedValue(mockResponse);
+            const headers = { 'X-Custom': 'v' };
+            await networkOps.updateDhcpReservation('AA-BB-CC-11-22-33', { netId: 'n', mac: 'm', status: true }, 'site-123', headers);
+            expect(mockRequest.patch).toHaveBeenCalledWith(expect.any(String), { netId: 'n', mac: 'm', status: true }, headers);
+        });
+
+        it('should use default site if siteId not provided', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: {} };
+            vi.mocked(mockRequest.patch).mockResolvedValue(mockResponse);
+
+            await networkOps.updateDhcpReservation('AA-BB-CC-11-22-33', { netId: 'n', mac: 'm', status: true });
+
+            expect(mockSite.resolveSiteId).toHaveBeenCalledWith(undefined);
+            expect(mockRequest.patch).toHaveBeenCalledWith(
+                '/openapi/v1/test-omadac/sites/default-site/setting/service/dhcp/AA-BB-CC-11-22-33',
+                expect.any(Object),
+                undefined
+            );
+        });
+
+        it('should propagate API errors via ensureSuccess', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: -34514, msg: 'IP conflicts with existing reservation', result: null };
+            vi.mocked(mockRequest.patch).mockResolvedValue(mockResponse);
+
+            await expect(networkOps.updateDhcpReservation('AA-BB-CC-11-22-33', { netId: 'n', mac: 'm', status: true }, 'site-123')).rejects.toThrow(
+                'IP conflicts with existing reservation'
+            );
+        });
+    });
+
+    describe('deleteDhcpReservation', () => {
+        it('should DELETE a DHCP reservation by MAC', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: {} };
+            vi.mocked(mockRequest.delete).mockResolvedValue(mockResponse);
+
+            const result = await networkOps.deleteDhcpReservation('AA-BB-CC-11-22-33', 'site-123');
+
+            expect(mockSite.resolveSiteId).toHaveBeenCalledWith('site-123');
+            expect(mockRequest.delete).toHaveBeenCalledWith(
+                '/openapi/v1/test-omadac/sites/site-123/setting/service/dhcp/AA-BB-CC-11-22-33',
+                undefined
+            );
+            expect(result).toEqual({});
+        });
+
+        it('should pass custom headers', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: {} };
+            vi.mocked(mockRequest.delete).mockResolvedValue(mockResponse);
+            const headers = { 'X-Custom': 'v' };
+            await networkOps.deleteDhcpReservation('AA-BB-CC-11-22-33', 'site-123', headers);
+            expect(mockRequest.delete).toHaveBeenCalledWith(expect.any(String), headers);
+        });
+
+        it('should use default site if siteId not provided', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: {} };
+            vi.mocked(mockRequest.delete).mockResolvedValue(mockResponse);
+
+            await networkOps.deleteDhcpReservation('AA-BB-CC-11-22-33');
+
+            expect(mockSite.resolveSiteId).toHaveBeenCalledWith(undefined);
+            expect(mockRequest.delete).toHaveBeenCalledWith(
+                '/openapi/v1/test-omadac/sites/default-site/setting/service/dhcp/AA-BB-CC-11-22-33',
+                undefined
+            );
+        });
+
+        it('should URL-encode special chars in mac path segment', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: {} };
+            vi.mocked(mockRequest.delete).mockResolvedValue(mockResponse);
+            await networkOps.deleteDhcpReservation('AA:BB:CC:11:22:33', 'site-123');
+            expect(mockRequest.delete).toHaveBeenCalledWith(
+                '/openapi/v1/test-omadac/sites/site-123/setting/service/dhcp/AA%3ABB%3ACC%3A11%3A22%3A33',
+                undefined
+            );
+        });
+
+        it('should propagate API errors', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: -33000, msg: 'This site does not exist.', result: null };
+            vi.mocked(mockRequest.delete).mockResolvedValue(mockResponse);
+
+            await expect(networkOps.deleteDhcpReservation('AA-BB-CC-11-22-33', 'missing-site')).rejects.toThrow('This site does not exist.');
+        });
+    });
 });

@@ -505,6 +505,8 @@ In client-credentials mode the server already treats `Mcp-Session-Id` as optiona
 | `getUpnpSetting` | Gets UPnP setting for the site gateway. |
 | `getDdnsGrid` | Gets DDNS entries (paginated). |
 | `getDhcpReservationGrid` | Gets DHCP reservations (paginated). |
+| `updateDhcpReservation` | Modifies an existing DHCP reservation by MAC (rename, re-IP, toggle). |
+| `deleteDhcpReservation` | Deletes a DHCP reservation by MAC. |
 | `getGridIpMacBinding` | Gets IP-MAC binding entries (paginated). |
 | `getIpMacBindingGeneralSetting` | Gets IP-MAC binding global toggle setting.                               |
 | `getBandwidthControl` | Gets global bandwidth control configuration. |
@@ -761,6 +763,8 @@ In client-credentials mode the server already treats `Mcp-Session-Id` as optiona
 | `getDdnsGrid` | Get DDNS (Dynamic DNS) entries for the site gateway. | `getDdnsGrid` |
 | `getDevice` | [DEPRECATED] Use `listDevices` instead. This alias filters the device list in-process to return a single device; there is no separate device-detail API. | `getDevice` |
 | `getDhcpReservationGrid` | Get DHCP reservations for the site. | `getDhcpReservationGrid` |
+| `updateDhcpReservation` | Modify an existing DHCP reservation by MAC. Required: `mac` (path), `netId`, `status`. | `updateDhcpReservation` |
+| `deleteDhcpReservation` | Delete an existing DHCP reservation by MAC. | `deleteDhcpReservation` |
 | `getDnsCacheSetting` | Get DNS cache setting for the site gateway. | `getDnsCacheSetting` |
 | `getDnsProxy` | Get DNS proxy configuration for the site gateway. | `getDnsProxy` |
 | `getFirewallSetting` | Get firewall configuration and rules for a site, including ACL rule.... | `getFirewallSetting` |

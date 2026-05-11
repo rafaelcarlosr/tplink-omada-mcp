@@ -582,6 +582,37 @@ export class NetworkOperations {
     }
 
     /**
+     * Modify an existing DHCP reservation by MAC address.
+     * OperationId: modifyDhcpReservation
+     *
+     * @param mac - MAC address of the reservation, format: AA-BB-CC-11-22-33.
+     * @param body - Reservation body conforming to CreateDhcpReservationOpenApiVO. Required:
+     *   - netId: LAN network ID (see getLanNetworkList)
+     *   - mac: device MAC address
+     *   - status: enable status
+     *   Optional: ip, description, options, confirmConflict.
+     */
+    public async updateDhcpReservation(mac: string, body: unknown, siteId?: string, customHeaders?: CustomHeaders): Promise<unknown> {
+        const resolvedSiteId = this.site.resolveSiteId(siteId);
+        const path = this.buildPath(`/sites/${encodeURIComponent(resolvedSiteId)}/setting/service/dhcp/${encodeURIComponent(mac)}`);
+        const response = await this.request.patch<OmadaApiResponse<unknown>>(path, body, customHeaders);
+        return this.request.ensureSuccess(response);
+    }
+
+    /**
+     * Delete an existing DHCP reservation by MAC address.
+     * OperationId: deleteDhcpReservation
+     *
+     * @param mac - MAC address of the reservation, format: AA-BB-CC-11-22-33.
+     */
+    public async deleteDhcpReservation(mac: string, siteId?: string, customHeaders?: CustomHeaders): Promise<unknown> {
+        const resolvedSiteId = this.site.resolveSiteId(siteId);
+        const path = this.buildPath(`/sites/${encodeURIComponent(resolvedSiteId)}/setting/service/dhcp/${encodeURIComponent(mac)}`);
+        const response = await this.request.delete<OmadaApiResponse<unknown>>(path, customHeaders);
+        return this.request.ensureSuccess(response);
+    }
+
+    /**
      * Get IP-MAC binding entries.
      * OperationId: getGridIpMacBinding
      */
