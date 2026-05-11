@@ -335,6 +335,7 @@ import { registerListWireguardTool } from './listWireguard.js';
 import { registerListWireguardPeersTool } from './listWireguardPeers.js';
 import { registerModifyEapAclTool } from './modifyEapAcl.js';
 import { registerModifyOsgAclTool } from './modifyOsgAcl.js';
+import { registerModifyOswAclTool } from './modifyOswAcl.js';
 import { registerSearchDevicesTool } from './searchDevices.js';
 import { registerSetClientRateLimitTool } from './setClientRateLimit.js';
 import { registerSetClientRateLimitProfileTool } from './setClientRateLimitProfile.js';
@@ -589,6 +590,7 @@ const TOOL_REGISTRY: ToolEntry[] = [
     { fn: registerDeleteAclTool, category: 'firewall-acl', permission: 'write' },
     { fn: registerModifyOsgAclTool, category: 'firewall-acl', permission: 'write' },
     { fn: registerModifyEapAclTool, category: 'firewall-acl', permission: 'write' },
+    { fn: registerModifyOswAclTool, category: 'firewall-acl', permission: 'write' },
 
     // --- Firewall traffic ---
     { fn: registerGetUrlFilterGeneralTool, category: 'firewall-traffic', permission: 'read' },

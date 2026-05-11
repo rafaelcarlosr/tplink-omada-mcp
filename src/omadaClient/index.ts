@@ -776,6 +776,10 @@ export class OmadaClient {
         return await this.networkOps.modifyEapAcl(aclId, body, siteId, customHeaders);
     }
 
+    public async modifyOswAcl(aclId: string, body: unknown, siteId?: string, customHeaders?: CustomHeaders): Promise<unknown> {
+        return await this.networkOps.modifyOswAcl(aclId, body, siteId, customHeaders);
+    }
+
     public async listStaticRoutes(siteId?: string, customHeaders?: CustomHeaders): Promise<unknown[]> {
         return await this.networkOps.listStaticRoutes(siteId, customHeaders);
     }

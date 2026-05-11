@@ -313,6 +313,22 @@ export class NetworkOperations {
     }
 
     /**
+     * Modify a switch (OSW) ACL rule. L2 rule with port/VLAN binding.
+     * OperationId: modifyOswAcl
+     *
+     * @param aclId - ACL rule ID (returned by listOswAcls).
+     * @param body - Updated rule body conforming to SwitchACLConfig. Required:
+     *   bindingType, description, destinationType, etherType, policy, protocols,
+     *   sourceIds, sourceType, status.
+     */
+    public async modifyOswAcl(aclId: string, body: unknown, siteId?: string, customHeaders?: CustomHeaders): Promise<unknown> {
+        const resolvedSiteId = this.site.resolveSiteId(siteId);
+        const path = this.buildPath(`/sites/${encodeURIComponent(resolvedSiteId)}/acls/osw-acls/${encodeURIComponent(aclId)}`);
+        const response = await this.request.put<OmadaApiResponse<unknown>>(path, body, customHeaders);
+        return this.request.ensureSuccess(response);
+    }
+
+    /**
      * List static routing rules.
      * OperationId: getStaticRoutingList
      */
