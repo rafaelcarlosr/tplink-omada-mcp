@@ -919,6 +919,160 @@ describe('NetworkOperations', () => {
         });
     });
 
+    describe('createTimeRangeProfile', () => {
+        const sampleBody = {
+            name: 'Kids Wifi Off',
+            dayMode: 0,
+            timeList: [{ dayType: 0, startTimeH: 22, startTimeM: 0, endTimeH: 7, endTimeM: 0 }],
+        };
+
+        it('should POST to the time-range-profiles (plural) path', async () => {
+            const mockResult = { id: 'tr-1', ...sampleBody };
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: mockResult };
+            vi.mocked(mockRequest.post).mockResolvedValue(mockResponse);
+
+            const result = await networkOps.createTimeRangeProfile(sampleBody, 'site-123');
+
+            expect(mockSite.resolveSiteId).toHaveBeenCalledWith('site-123');
+            expect(mockRequest.post).toHaveBeenCalledWith('/openapi/v1/test-omadac/sites/site-123/time-range-profiles', sampleBody, undefined);
+            expect(result).toEqual(mockResult);
+        });
+
+        it('should pass custom headers', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: {} };
+            vi.mocked(mockRequest.post).mockResolvedValue(mockResponse);
+            const headers = { 'X-Custom': 'v' };
+            await networkOps.createTimeRangeProfile(sampleBody, 'site-123', headers);
+            expect(mockRequest.post).toHaveBeenCalledWith(expect.any(String), sampleBody, headers);
+        });
+
+        it('should use default site if siteId not provided', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: {} };
+            vi.mocked(mockRequest.post).mockResolvedValue(mockResponse);
+
+            await networkOps.createTimeRangeProfile(sampleBody);
+
+            expect(mockSite.resolveSiteId).toHaveBeenCalledWith(undefined);
+            expect(mockRequest.post).toHaveBeenCalledWith('/openapi/v1/test-omadac/sites/default-site/time-range-profiles', sampleBody, undefined);
+        });
+
+        it('should propagate API errors via ensureSuccess', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: -33709, msg: 'This profile already exists.', result: null };
+            vi.mocked(mockRequest.post).mockResolvedValue(mockResponse);
+
+            await expect(networkOps.createTimeRangeProfile(sampleBody, 'site-123')).rejects.toThrow('This profile already exists.');
+        });
+    });
+
+    describe('modifyTimeRangeProfile', () => {
+        const sampleBody = {
+            name: 'Kids Wifi Off',
+            dayMode: 0,
+            timeList: [{ dayType: 0, startTimeH: 21, startTimeM: 0, endTimeH: 7, endTimeM: 0 }],
+        };
+
+        it('should PUT to the time-range-profile/{id} (singular) path', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: { id: 'tr-1' } };
+            vi.mocked(mockRequest.put).mockResolvedValue(mockResponse);
+
+            const result = await networkOps.modifyTimeRangeProfile('tr-1', sampleBody, 'site-123');
+
+            expect(mockSite.resolveSiteId).toHaveBeenCalledWith('site-123');
+            expect(mockRequest.put).toHaveBeenCalledWith('/openapi/v1/test-omadac/sites/site-123/time-range-profile/tr-1', sampleBody, undefined);
+            expect(result).toEqual({ id: 'tr-1' });
+        });
+
+        it('should pass custom headers', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: {} };
+            vi.mocked(mockRequest.put).mockResolvedValue(mockResponse);
+            const headers = { 'X-Custom': 'v' };
+            await networkOps.modifyTimeRangeProfile('tr-1', sampleBody, 'site-123', headers);
+            expect(mockRequest.put).toHaveBeenCalledWith(expect.any(String), sampleBody, headers);
+        });
+
+        it('should use default site if siteId not provided', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: {} };
+            vi.mocked(mockRequest.put).mockResolvedValue(mockResponse);
+
+            await networkOps.modifyTimeRangeProfile('tr-1', sampleBody);
+
+            expect(mockSite.resolveSiteId).toHaveBeenCalledWith(undefined);
+            expect(mockRequest.put).toHaveBeenCalledWith('/openapi/v1/test-omadac/sites/default-site/time-range-profile/tr-1', sampleBody, undefined);
+        });
+
+        it('should URL-encode special chars in profileId path segment', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: {} };
+            vi.mocked(mockRequest.put).mockResolvedValue(mockResponse);
+            await networkOps.modifyTimeRangeProfile('tr/with spaces', sampleBody, 'site-123');
+            expect(mockRequest.put).toHaveBeenCalledWith(
+                '/openapi/v1/test-omadac/sites/site-123/time-range-profile/tr%2Fwith%20spaces',
+                sampleBody,
+                undefined
+            );
+        });
+
+        it('should propagate API errors via ensureSuccess', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: -33716, msg: 'End time should be later than start time.', result: null };
+            vi.mocked(mockRequest.put).mockResolvedValue(mockResponse);
+
+            await expect(networkOps.modifyTimeRangeProfile('tr-1', sampleBody, 'site-123')).rejects.toThrow(
+                'End time should be later than start time.'
+            );
+        });
+    });
+
+    describe('deleteTimeRangeProfile', () => {
+        it('should DELETE from the time-range-profile/{id} (singular) path', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: {} };
+            vi.mocked(mockRequest.delete).mockResolvedValue(mockResponse);
+
+            const result = await networkOps.deleteTimeRangeProfile('tr-1', 'site-123');
+
+            expect(mockSite.resolveSiteId).toHaveBeenCalledWith('site-123');
+            expect(mockRequest.delete).toHaveBeenCalledWith('/openapi/v1/test-omadac/sites/site-123/time-range-profile/tr-1', undefined);
+            expect(result).toEqual({});
+        });
+
+        it('should pass custom headers', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: {} };
+            vi.mocked(mockRequest.delete).mockResolvedValue(mockResponse);
+            const headers = { 'X-Custom': 'v' };
+            await networkOps.deleteTimeRangeProfile('tr-1', 'site-123', headers);
+            expect(mockRequest.delete).toHaveBeenCalledWith(expect.any(String), headers);
+        });
+
+        it('should use default site if siteId not provided', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: {} };
+            vi.mocked(mockRequest.delete).mockResolvedValue(mockResponse);
+
+            await networkOps.deleteTimeRangeProfile('tr-1');
+
+            expect(mockSite.resolveSiteId).toHaveBeenCalledWith(undefined);
+            expect(mockRequest.delete).toHaveBeenCalledWith('/openapi/v1/test-omadac/sites/default-site/time-range-profile/tr-1', undefined);
+        });
+
+        it('should URL-encode special chars in profileId path segment', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = { errorCode: 0, result: {} };
+            vi.mocked(mockRequest.delete).mockResolvedValue(mockResponse);
+            await networkOps.deleteTimeRangeProfile('tr/with spaces', 'site-123');
+            expect(mockRequest.delete).toHaveBeenCalledWith(
+                '/openapi/v1/test-omadac/sites/site-123/time-range-profile/tr%2Fwith%20spaces',
+                undefined
+            );
+        });
+
+        it('should propagate API errors via ensureSuccess', async () => {
+            const mockResponse: OmadaApiResponse<unknown> = {
+                errorCode: -33754,
+                msg: 'Failed to delete this time range profile because it is applied in ACL.',
+                result: null,
+            };
+            vi.mocked(mockRequest.delete).mockResolvedValue(mockResponse);
+
+            await expect(networkOps.deleteTimeRangeProfile('tr-1', 'site-123')).rejects.toThrow('applied in ACL.');
+        });
+    });
+
     describe('listPortSchedules', () => {
         it('should list port schedules', async () => {
             const mockData = [{ id: 'ps-1', name: 'Schedule 1' }];

@@ -842,6 +842,18 @@ export class OmadaClient {
         return await this.networkOps.listTimeRangeProfiles(siteId, customHeaders);
     }
 
+    public async createTimeRangeProfile(body: unknown, siteId?: string, customHeaders?: CustomHeaders): Promise<unknown> {
+        return await this.networkOps.createTimeRangeProfile(body, siteId, customHeaders);
+    }
+
+    public async modifyTimeRangeProfile(profileId: string, body: unknown, siteId?: string, customHeaders?: CustomHeaders): Promise<unknown> {
+        return await this.networkOps.modifyTimeRangeProfile(profileId, body, siteId, customHeaders);
+    }
+
+    public async deleteTimeRangeProfile(profileId: string, siteId?: string, customHeaders?: CustomHeaders): Promise<unknown> {
+        return await this.networkOps.deleteTimeRangeProfile(profileId, siteId, customHeaders);
+    }
+
     public async listPortSchedules(siteId?: string, customHeaders?: CustomHeaders): Promise<unknown[]> {
         return await this.networkOps.listPortSchedules(siteId, customHeaders);
     }

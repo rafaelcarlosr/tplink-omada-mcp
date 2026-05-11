@@ -523,6 +523,63 @@ export class NetworkOperations {
     }
 
     /**
+     * Create a new time range profile (schedule for SSIDs, ACLs, port schedules, etc.).
+     * OperationId: createTimeRangeProfile
+     *
+     * @param body - Profile body conforming to CreateTimeRangeProfileOpenApiVO. Required:
+     *   - name: 1-64 chars
+     *   - dayMode: 0=Every Day, 1=Weekday, 2=Weekend, 3=Customized
+     *   - timeList: array of schedule windows (dayType, startTimeH/M, endTimeH/M)
+     *   Conditional: customDayMode (required when dayMode=3).
+     *
+     * Note: the path is `/time-range-profiles` (plural) for create, but `/time-range-profile/{profileId}` (singular)
+     * for modify/delete — the spec is inconsistent.
+     */
+    public async createTimeRangeProfile(body: unknown, siteId?: string, customHeaders?: CustomHeaders): Promise<unknown> {
+        const resolvedSiteId = this.site.resolveSiteId(siteId);
+        const path = this.buildPath(`/sites/${encodeURIComponent(resolvedSiteId)}/time-range-profiles`);
+        const response = await this.request.post<OmadaApiResponse<unknown>>(path, body, customHeaders);
+        return this.request.ensureSuccess(response);
+    }
+
+    /**
+     * Modify a time range profile.
+     * OperationId: modifyTimeRangeProfile
+     *
+     * @param profileId - Profile ID (returned by listTimeRangeProfiles).
+     * @param body - Updated body conforming to UpdateTimeRangeProfileOpenApiVO. Required: name, dayMode, timeList.
+     *   PUT semantics — full replacement.
+     */
+    public async modifyTimeRangeProfile(profileId: string, body: unknown, siteId?: string, customHeaders?: CustomHeaders): Promise<unknown> {
+        const resolvedSiteId = this.site.resolveSiteId(siteId);
+        const path = this.buildPath(`/sites/${encodeURIComponent(resolvedSiteId)}/time-range-profile/${encodeURIComponent(profileId)}`);
+        const response = await this.request.put<OmadaApiResponse<unknown>>(path, body, customHeaders);
+        return this.request.ensureSuccess(response);
+    }
+
+    /**
+     * Delete a time range profile by ID.
+     * OperationId: deleteTimeRangeProfile
+     *
+     * @param profileId - Profile ID (returned by listTimeRangeProfiles).
+     *
+     * Documented error codes:
+     *   -33701: Applied in wireless networks — cannot delete.
+     *   -33710: This profile does not exist.
+     *   -33722: Used in PoE Schedule — cannot delete.
+     *   -33754: Applied in ACL — cannot delete.
+     *   -33776: Applied in IPS — cannot delete.
+     *   -34555: Used in Port Schedule — cannot delete.
+     *   -35106: Applied in DPI — cannot delete.
+     */
+    public async deleteTimeRangeProfile(profileId: string, siteId?: string, customHeaders?: CustomHeaders): Promise<unknown> {
+        const resolvedSiteId = this.site.resolveSiteId(siteId);
+        const path = this.buildPath(`/sites/${encodeURIComponent(resolvedSiteId)}/time-range-profile/${encodeURIComponent(profileId)}`);
+        const response = await this.request.delete<OmadaApiResponse<unknown>>(path, customHeaders);
+        return this.request.ensureSuccess(response);
+    }
+
+    /**
      * List port schedules.
      * OperationId: getPortScheduleList
      */

@@ -5,11 +5,13 @@ import type { OmadaClient } from '../omadaClient/index.js';
 import { logger } from '../utils/logger.js';
 import { registerBatchDeleteOsgCustomAclsTool } from './batchDeleteOsgCustomAcls.js';
 import { registerCreateGroupProfileTool } from './createGroupProfile.js';
+import { registerCreateTimeRangeProfileTool } from './createTimeRangeProfile.js';
 import { registerDeleteAclTool } from './deleteAcl.js';
 import { registerDeleteDhcpReservationTool } from './deleteDhcpReservation.js';
 import { registerDeleteGroupProfileTool } from './deleteGroupProfile.js';
 import { registerDeleteLanNetworkTool } from './deleteLanNetwork.js';
 import { registerDeleteLanProfileTool } from './deleteLanProfile.js';
+import { registerDeleteTimeRangeProfileTool } from './deleteTimeRangeProfile.js';
 import { registerDisableClientRateLimitTool } from './disableClientRateLimit.js';
 import { registerGetAccessControlTool } from './getAccessControl.js';
 import { registerGetAclConfigTypeSettingTool } from './getAclConfigTypeSetting.js';
@@ -338,6 +340,7 @@ import { registerModifyAclIndexTool } from './modifyAclIndex.js';
 import { registerModifyEapAclTool } from './modifyEapAcl.js';
 import { registerModifyOsgAclTool } from './modifyOsgAcl.js';
 import { registerModifyOswAclTool } from './modifyOswAcl.js';
+import { registerModifyTimeRangeProfileTool } from './modifyTimeRangeProfile.js';
 import { registerSearchDevicesTool } from './searchDevices.js';
 import { registerSetClientRateLimitTool } from './setClientRateLimit.js';
 import { registerSetClientRateLimitProfileTool } from './setClientRateLimitProfile.js';
@@ -653,6 +656,9 @@ const TOOL_REGISTRY: ToolEntry[] = [
     { fn: registerListMdnsProfileTool, category: 'profiles', permission: 'read' },
     { fn: registerListGroupProfilesTool, category: 'profiles', permission: 'read' },
     { fn: registerListTimeRangeProfilesTool, category: 'profiles', permission: 'read' },
+    { fn: registerCreateTimeRangeProfileTool, category: 'profiles', permission: 'write' },
+    { fn: registerModifyTimeRangeProfileTool, category: 'profiles', permission: 'write' },
+    { fn: registerDeleteTimeRangeProfileTool, category: 'profiles', permission: 'write' },
     { fn: registerGetRateLimitProfilesTool, category: 'profiles', permission: 'read' },
     { fn: registerGetGoogleLdapProfileTool, category: 'profiles', permission: 'read' },
     { fn: registerGetBuiltinRadiusUsersTool, category: 'profiles', permission: 'read' },

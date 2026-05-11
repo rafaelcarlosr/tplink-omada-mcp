@@ -357,6 +357,9 @@ In client-credentials mode the server already treats `Mcp-Session-Id` as optiona
 | `getApplicationControlStatus` | Gets application control status for a site.                                 |
 | `getSshSetting` | Gets SSH settings for a site. |
 | `listTimeRangeProfiles` | Lists time range profiles. |
+| `createTimeRangeProfile` | Creates a new time range profile (schedule for SSIDs, ACLs, PoE/port schedules, etc.). |
+| `modifyTimeRangeProfile` | Modifies a time range profile by `profileId` (PUT full-replacement). |
+| `deleteTimeRangeProfile` | Deletes a time range profile by `profileId`. Fails if the profile is referenced by an SSID, ACL, port/PoE schedule, IPS, or DPI rule. |
 | `getRateLimitProfiles` | Gets the list of available rate limit profiles for bandwidth control. |
 ### Firewall & ACL
 
@@ -696,6 +699,9 @@ In client-credentials mode the server already treats `Mcp-Session-Id` as optiona
 | `listStaticRoutes` | [DEPRECATED] Use `getGridStaticRouting` instead. This tool aggregates all pages; getGridStaticRouting returns a single paginated page. | `listStaticRoutes` |
 | `listSwitchNetworks` | List VLAN network assignments for a switch. | `listSwitchNetworks` |
 | `listTimeRangeProfiles` | List time range profiles configured for a site. | `listTimeRangeProfiles` |
+| `createTimeRangeProfile` | Create a new time range profile. Required: name, dayMode (0=Every Day / 1=Weekday / 2=Weekend / 3=Customized), timeList. customDayMode required when dayMode=3. | `createTimeRangeProfile` |
+| `modifyTimeRangeProfile` | Modify a time range profile by `profileId` (PUT, full-replacement). Required body same as create. | `modifyTimeRangeProfile` |
+| `deleteTimeRangeProfile` | Delete a time range profile by `profileId`. Deletion fails if the profile is referenced by SSID/ACL/PoE/Port/IPS/DPI. | `deleteTimeRangeProfile` |
 | `searchDevices` | Search for devices globally across all sites the user has access to. | `searchDevices` |
 | `setClientRateLimit` | Set custom rate limit (bandwidth control) for a specific client. | `setClientRateLimit` |
 | `setClientRateLimitProfile` | Apply a predefined rate limit profile to a specific client. | `setClientRateLimitProfile` |
