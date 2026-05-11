@@ -29,6 +29,15 @@ grep -nE '"{path-with-{}-placeholders}"' docs/openapi/<spec-file>.json
 
 Confirm the exact method (`"delete"`, `"patch"`, `"put"`, `"post"`) is nested under the matched path. If missing — STOP. Report back that the endpoint isn't documented and the operation is out of scope per `CLAUDE.md`'s API validation rule.
 
+## Worktree hygiene (when dispatched in parallel)
+
+If you're running in an isolated git worktree:
+
+1. **Verify your base.** Run `git log --oneline -1` and compare to the caller's reported HEAD. If your worktree was created from a stale ref (common failure mode: based on `main`/`develop` instead of the active feature branch), the Tier 0 infra (`request.post`/`put`/`delete`) and prior Tier 1 ops won't exist. STOP and report — do NOT re-implement Tier 0; the caller will rebase your worktree or hand you a fresh one. Re-implementing already-shipped infra creates duplicate code that cannot merge cleanly.
+2. **Stay in your worktree's working directory.** Use paths relative to `pwd` (e.g. `src/omadaClient/network.ts`), never absolute paths to the parent repo (e.g. `/home/user/tplink-omada-mcp/src/...`). Absolute paths write to the parent tree and leak your work outside the isolated branch, defeating the point of the worktree.
+3. **Commit on your worktree's branch.** When you're done and quality gates pass, make a single commit on the worktree branch (do not push). The caller will cherry-pick or merge.
+4. **Tool-count bumps in parallel.** When multiple agents run in parallel from the same base, each bumps the count by 1. Set the assertion to `<caller's reported count> + 1` — don't try to predict the cumulative total. The caller reconciles the final count when merging.
+
 ## File checklist (one operation = these edits)
 
 | # | File | Action |
